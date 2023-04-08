@@ -27,18 +27,16 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onFallingBlockToBlock(EntityChangeBlockEvent e){
-        if(e.getEntityType() == EntityType.FALLING_BLOCK){
+    public void onFallingBlockToBlock(EntityChangeBlockEvent e) {
+        if (e.getEntityType() == EntityType.FALLING_BLOCK) {
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
 
-            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()+0.5);
-                spawnLoc.setZ(spawnLoc.getZ()+0.5);
+            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
+                Location obsidianPlatformCenter = new Location(movingTo.getWorld(), 100, 50, 0); // change coordinates to the center of the obsidian platform in the end dimension
+                Location spawnLoc = obsidianPlatformCenter.clone().add(0, 1, 0); // spawn the new falling block entity one block above the obsidian platform
 
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
                 Vector dummyVel = vel.clone();
@@ -52,6 +50,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             }
         }
     }
+
 
 
     Block getBlockMovingTo(Location loc, Vector vel){
