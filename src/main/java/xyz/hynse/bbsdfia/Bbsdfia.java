@@ -10,7 +10,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
 
 public class Bbsdfia extends JavaPlugin implements Listener {
     @Override
@@ -38,22 +40,32 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 Location obsidianPlatformCenter = new Location(movingTo.getWorld(), 100, 50, 0); // change coordinates to the center of the obsidian platform in the end dimension
                 Location spawnLoc = obsidianPlatformCenter.clone().add(0, 1, 0); // spawn the new falling block entity one block above the obsidian platform
 
-                FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
-                Vector dummyVel = vel.clone();
-                dummyVel.setY(-dummyVel.getY());
-                dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
-                // add a constant downward velocity to simulate gravity
-                dummyVel.add(new Vector(0, 0.3, 0));
+                // Schedule the logic to be run asynchronously after 1 tick
+                getServer().getAsyncScheduler().runNow(this, scheduledTask -> new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+                        Vector dummyVel = vel.clone();
+                        dummyVel.setY(-dummyVel.getY());
+                        dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
-                dummy.setVelocity(dummyVel);
+                        // add a constant downward velocity to simulate gravity
+                        dummyVel.add(new Vector(0, 0.3, 0));
+
+                        dummy.setVelocity(dummyVel);
+                    }
+                }.runTask(this));
+
+
             }
         }
     }
 
 
 
-    Block getBlockMovingTo(Location loc, Vector vel){
+
+                Block getBlockMovingTo(Location loc, Vector vel){
         double absMax = 0, max = 0;
         char dir = ' ';
         Block relative = null;
