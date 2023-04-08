@@ -1,0 +1,5 @@
+name: bbsdfia
+version: '${version}'
+main: xyz.hynse.bbsdfia.Bbsdfia
+api-version: 1.19
+folia-supported: true
