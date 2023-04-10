@@ -50,7 +50,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         }
     }
 
-
     Block getBlockMovingTo(Location loc, Vector vel){
         double absMax = 0, max = 0;
         char dir = ' ';
