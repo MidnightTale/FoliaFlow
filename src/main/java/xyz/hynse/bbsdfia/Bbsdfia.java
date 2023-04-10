@@ -35,10 +35,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Block movingTo = getBlockMovingTo(loc, vel);
 
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()+0.5);
-                spawnLoc.setZ(spawnLoc.getZ()+0.5);
+                Location spawnLoc = new Location(loc.getWorld(), 0, 80, 0);
 
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
                 Vector dummyVel = vel.clone();
@@ -46,7 +43,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
                 // add a constant downward velocity to simulate gravity
-                dummyVel.add(new Vector(0, 0.3, 0));
+                dummyVel.add(new Vector(1.5, 0.15, 0));
 
                 dummy.setVelocity(dummyVel);
             }
