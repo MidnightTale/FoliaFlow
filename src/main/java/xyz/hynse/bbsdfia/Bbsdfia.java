@@ -65,12 +65,18 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     Material material = blockData.getMaterial();
                     BlockData fallingBlockData = material.createBlockData();
                     FallingBlock fallingBlock = world.spawnFallingBlock(blockLocation, fallingBlockData);
+                    getLogger().info("XoaN " + "world=" + world.getName() );
+                    getLogger().info("XoaN " + "blockLocation=" + blockLocation.toString());
+                    getLogger().info("XoaN " + "blockData=" + blockData.getAsString());
+                    getLogger().info("XoaN " + "material=" + material.name());
+                    getLogger().info("XoaN " + "fallingBlockData=" + fallingBlockData.getAsString());
+                    getLogger().info("XoaN " + "fallingBlock=" + fallingBlock.getUniqueId().toString());
 
-                    logger.info("XoaN " + "world=" + world.getName() + ", blockLocation=" + blockLocation.toString() + ", blockData=" + blockData.getAsString() + ", material=" + material.name() + ", fallingBlockData=" + fallingBlockData.getAsString() + ", fallingBlock=" + fallingBlock.getUniqueId().toString());
-                    //getLogger().info("XoaT " + endWorld.spawnEntity(location, EntityType.FALLING_BLOCK));
-                    //getLogger().info("XoaN " + endWorld.spawnFallingBlock(location, e.getBlock().getBlockData().getMaterial().createBlockData()));
+                      /*
+                    getLogger().info("XoaT " + endWorld.spawnEntity(location, EntityType.FALLING_BLOCK));
+                    getLogger().info("XoaN " + endWorld.spawnFallingBlock(location, e.getBlock().getBlockData().getMaterial().createBlockData()));
 
-                    /*
+
                     FallingBlock fallingBlock = endWorld.spawnFallingBlock(location, e.getBlock().getBlockData().getMaterial().createBlockData());
                     FallingBlock fallingBlock = (FallingBlock) endWorld.spawnEntity(location, EntityType.FALLING_BLOCK);
 
