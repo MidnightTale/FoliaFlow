@@ -41,7 +41,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 World world = Bukkit.getServer().getWorld("world");
                 Location spawnLoc = new Location(world, 100, 50, 0);
                 */
-                Bukkit.getAsyncScheduler().runNow(this, task -> {
+                Bukkit.getAsyncScheduler().runNow(this, (task) -> {
                     FallingBlock dummy = loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData());
                     Vector dummyVel = vel.clone();
                     dummyVel.setY(-dummyVel.getY());
@@ -51,7 +51,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     dummyVel.add(new Vector(0, 0.3, 0));
 
                     dummy.setVelocity(dummyVel);
-                });
+                }).isCancelled();
             }
         }
     }
