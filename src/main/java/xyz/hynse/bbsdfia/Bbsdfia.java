@@ -55,8 +55,10 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
                     //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
 
-                    FallingBlock dummy = nesssistw.spawnFallingBlock(location, ((FallingBlock) entity).getBlockData());
-                    Vector dummyVel = vel.clone();
+                Material blockMaterial = ((FallingBlock) entity).getBlockData().getMaterial();
+                FallingBlock dummy = nesssistw.spawnFallingBlock(location, blockMaterial.createBlockData());
+
+                Vector dummyVel = vel.clone();
                     dummy.setVelocity(dummyVel);
 
                     // Debug message
