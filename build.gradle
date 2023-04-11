@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'xyz.hynse'
-version = '1.0-SNAPSHOT'
+version = '1.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -22,9 +22,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT"
-    implementation "com.tcoded:FoliaLib:0.2.0"
-}
+    compileOnly "dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT"}
 
 def targetJavaVersion = 17
 java {
