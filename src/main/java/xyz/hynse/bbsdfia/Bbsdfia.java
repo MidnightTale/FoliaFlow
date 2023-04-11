@@ -54,9 +54,10 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     // Spawn a new falling block entity in the end
                     World endWorld = Bukkit.getWorld("world_the_end");
                     World currentWorld = entity.getWorld();
+                    Location location = new Location(endWorld, 100, 50, 0);
                     getLogger().info("Current world: " + currentWorld.getName());
                     getLogger().info("End world: " + endWorld.getName());
-                    Location location = new Location(endWorld, loc.getX(), loc.getY(), loc.getZ());
+                    getLogger().info("New location: " + "World/" + location.getWorld() + " (X:" + location.getX() + " Y:" + location.getY() + " Z:" + location.getZ() + ")");
                     FallingBlock fallingBlock = endWorld.spawnFallingBlock(location, e.getBlock().getBlockData().getMaterial().createBlockData());
                     fallingBlock.setVelocity(vel);
                 } catch (Exception ex) {
