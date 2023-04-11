@@ -1,5 +1,6 @@
 package xyz.hynse.bbsdfia;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -55,7 +56,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 spawnLoc.setZ(spawnLoc.getZ() + 0.5);
 
                 // Spawn a new falling block entity at the center of the end portal block
-                FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+                FallingBlock dummy = Bukkit.getServer().getWorld("world_the_end").spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
 
                 // Copy the velocity of the original entity and invert the y component
                 Vector dummyVel = vel.clone();
