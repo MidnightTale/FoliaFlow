@@ -64,7 +64,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 // Double the velocity of the new entity
                 dummyVel.multiply(new Vector(2, 2, 2));
 
-                // Add a constant downward velocity to simulate gravity
+                // Add a constant upward velocity to simulate gravity
                 dummyVel.add(new Vector(0, 0.3, 0));
 
                 // Set the velocity of the new entity to the modified velocity
