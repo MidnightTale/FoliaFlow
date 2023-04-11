@@ -49,8 +49,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
             // Set the same velocity as the old block
             newBlock.setVelocity(event.getEntity().getVelocity());
-            // Set the same custom name as the old block
-            newBlock.setCustomName(event.getEntity().getCustomName());
         }
     }
 
