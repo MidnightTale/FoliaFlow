@@ -54,7 +54,14 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 // Spawn a new falling block entity in the end
 
                 Location location = new Location(Bukkit.getWorld("world_the_end"), 100, 50, 0);
+                System.out.println("Debug location:" + location);
+                System.out.println("Debug vel:" + vel);
+                System.out.println("Debug entity:" + entity);
+                System.out.println("Debug movingTo:" + movingTo);
+                System.out.println("Debug vel:" + vel);
+                System.out.println("Debug vel:" + vel);
                 FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, Material.STONE.createBlockData());
+                System.out.println("Debung falling:" + fallingBlock);
 
 
                 // Copy the velocity of the original entity and invert the y component
@@ -66,6 +73,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
                 // Add a constant upward velocity to simulate gravity
                 dummyVel.add(new Vector(0, 0.3, 0));
+                System.out.println("Debung dummyVel:" + dummyVel);
 
                 // Set the velocity of the new entity to the modified velocity
                 fallingBlock.setVelocity(dummyVel);
