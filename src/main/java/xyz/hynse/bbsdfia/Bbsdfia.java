@@ -47,6 +47,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 //Entity Scheduler Task
                 foliaLib.getImpl().runAtLocation(loc, () -> foliaLib.getImpl().runAtLocation(loc2, () -> foliaLib.getImpl().runAtEntity(entity, () -> {
                     //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
+                    try {
                     FallingBlock dummy = (FallingBlock) loc2.getWorld().spawnEntity(loc2, EntityType.FALLING_BLOCK);
                     Vector dummyVel = vel.clone();
                     dummy.setVelocity(dummyVel);
@@ -58,6 +59,10 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     dummy.setVelocity(new Vector(1, 0, 0));
                     //velocity to west
                     dummy.setVelocity(new Vector(-1, 0, 0));
+                    } catch (Exception ex) {
+                        getLogger().severe("Error spawning falling block entity: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
                 })));
             }
         }
