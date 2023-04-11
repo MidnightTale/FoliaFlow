@@ -2,10 +2,8 @@ package xyz.hynse.bbsdfia;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
@@ -39,35 +37,20 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     // This method is called when a falling block entity changes its block
     // Register the method as an event handler for the EntityChangeBlockEvent
     @EventHandler
-    public void onFallingBlockToBlock(EntityChangeBlockEvent e) {
-        // Check if the entity is a falling block
-        if (e.getEntityType() == EntityType.FALLING_BLOCK) {
-            // Get the entity and its location and velocity
-            Entity entity = e.getEntity();
-            Location loc = entity.getLocation();
-            Vector vel = entity.getVelocity();
-            // Spawn loocation for new falling block
-            Location spawnlocation = new Location(Bukkit.getWorld("world_the_end"), 100, 50, 0);
-            // Get a reference to the world_the_end world
-            World endWorld = Bukkit.getWorld("world_the_end");
-            // Get the block that the entity is moving towards
-            Block movingTo = getBlockMovingTo(loc, vel);
-            // If the block it's moving towards is an end portal block
-            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
+    public void onFallingBlockToBlock(EntityChangeBlockEvent event) {
+        // Get the block that was changed
+        Block block = event.getBlock();
 
-                // Spawn a new falling block entity in the end with the same material and block type as the old one
-                FallingBlock dummy = endWorld.spawnFallingBlock(spawnlocation, movingTo.getBlockData());
+        // Check if it was changed from a falling block
+        if (event.getEntityType() == EntityType.FALLING_BLOCK) {
+            // Spawn a new falling block at the same location as the old one
+            World world = Bukkit.getWorld("world_the_end"); // specify the world to spawn in
+            FallingBlock newBlock = world.spawnFallingBlock(block.getLocation(), ((FallingBlock) event.getEntity()).getBlockData());
 
-                // Copy the velocity of the original entity and invert the y component
-                Vector dummyVel = vel.clone();
-                dummyVel.setY(-dummyVel.getY());
-                // Double the velocity of the new entity
-                dummyVel.multiply(new Vector(2, 2, 2));
-                // Add a constant upward velocity to simulate gravity
-                dummyVel.add(new Vector(0, 0.3, 0));
-                // Set the velocity of the new entity to the modified velocity
-                dummy.setVelocity(dummyVel);
-            }
+            // Set the same velocity as the old block
+            newBlock.setVelocity(((FallingBlock) event.getEntity()).getVelocity());
+            // Set the same custom name as the old block
+            newBlock.setCustomName(((FallingBlock) event.getEntity()).getCustomName());
         }
     }
 
