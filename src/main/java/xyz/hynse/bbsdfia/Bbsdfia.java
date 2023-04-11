@@ -22,6 +22,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getLogger().info("Bbsdfia plugin started");
+
     }
 
     @Override
@@ -29,7 +30,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         super.onDisable();
         getServer().getLogger().info("Bbsdfia plugin stopped");
     }
-
+    FoliaLib foliaLib = new FoliaLib(this);
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() == EntityType.FALLING_BLOCK){
@@ -37,45 +38,27 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
+            foliaLib.getImpl().runAtEntity(entity, () -> {/* Code */
+            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+                Location spawnLoc = movingTo.getLocation();
+                spawnLoc.setX(spawnLoc.getX()+0.5);
+                spawnLoc.setY(spawnLoc.getY()+0.5);
+                spawnLoc.setZ(spawnLoc.getZ()+0.5);
 
-            World nesssistw = Bukkit.getServer().getWorld("world_the_end");
-            Location location = new Location(nesssistw, 100, 5, 0);
-
-            FoliaLib foliaLib = new FoliaLib(this);
-
-
-            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
-                // Debug message
-                getLogger().info("Falling block detected near end portal");
-
-                //Entity Scheduler Task
-                //foliaLib.getImpl().runAtEntity(entity, () -> {
-                    // Debug message
-                    getLogger().info("Spawning falling block in the end dimension");
-
-                    //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
-
-                Material blockMaterial = ((FallingBlock) entity).getBlockData().getMaterial();
-                FallingBlock dummy = nesssistw.spawnFallingBlock(location, blockMaterial.createBlockData());
-
+                FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
                 Vector dummyVel = vel.clone();
-                    dummy.setVelocity(dummyVel);
+                dummyVel.setY(-dummyVel.getY());
+                dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
-                    // Debug message
-                    getLogger().info("Setting velocity for the dummy falling block");
+                // add a constant downward velocity to simulate gravity
+                dummyVel.add(new Vector(0, 0.3, 0));
 
-                    //velocity to north
-                    dummy.setVelocity(new Vector(0, 1, 0));
-                    //velocity to south
-                    dummy.setVelocity(new Vector(0, -1, 0));
-                    //velocity to east
-                    dummy.setVelocity(new Vector(1, 0, 0));
-                    //velocity to west
-                    dummy.setVelocity(new Vector(-1, 0, 0));
-                //});
+                dummy.setVelocity(dummyVel);
             }
+            });
         }
     }
+
 
 
     Block getBlockMovingTo(Location loc, Vector vel){
