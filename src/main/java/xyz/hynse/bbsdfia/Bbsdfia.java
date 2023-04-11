@@ -40,10 +40,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
 
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                /*
-                World world = Bukkit.getServer().getWorld("world");
-                Location spawnLoc = new Location(world, 100, 50, 0);
-                */
                 //Entity Scheduler Task
                 foliaLib.getImpl().runAtLocation(loc, () -> foliaLib.getImpl().runAtLocation(loc2, () -> foliaLib.getImpl().runAtEntity(entity, () -> {
                     //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
