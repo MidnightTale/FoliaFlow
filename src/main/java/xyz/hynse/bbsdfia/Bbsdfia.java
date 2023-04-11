@@ -40,14 +40,24 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             FoliaLib foliaLib = new FoliaLib(this);
 
 
-            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
+                // Debug message
+                getLogger().info("Falling block detected near end portal");
+
                 //Entity Scheduler Task
                 foliaLib.getImpl().runAtEntity(entity, () -> {
+                    // Debug message
+                    getLogger().info("Spawning falling block in the end dimension");
+
                     //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
 
                     FallingBlock dummy = loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData());
                     Vector dummyVel = vel.clone();
                     dummy.setVelocity(dummyVel);
+
+                    // Debug message
+                    getLogger().info("Setting velocity for the dummy falling block");
+
                     //velocity to north
                     dummy.setVelocity(new Vector(0, 1, 0));
                     //velocity to south
@@ -56,9 +66,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     dummy.setVelocity(new Vector(1, 0, 0));
                     //velocity to west
                     dummy.setVelocity(new Vector(-1, 0, 0));
-
                 });
-                logger.info("im here 66");
             }
         }
     }
