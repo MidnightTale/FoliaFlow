@@ -14,6 +14,8 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.function.Consumer;
+
 public class Bbsdfia extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
@@ -42,16 +44,19 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 World world = Bukkit.getServer().getWorld("world");
                 Location spawnLoc = new Location(world, 100, 50, 0);
                 */
-                Bukkit.getAsyncScheduler().runNow(this, (ScheduledTask task) -> {
-                    FallingBlock dummy = loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData());
-                    Vector dummyVel = vel.clone();
-                    dummyVel.setY(-dummyVel.getY());
-                    dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
+                Bukkit.getAsyncScheduler().runNow(this, new Consumer<ScheduledTask>() {
+                    @Override
+                    public void accept(ScheduledTask task) {
+                        FallingBlock dummy = (FallingBlock) loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData()).getScheduler();
+                        Vector dummyVel = vel.clone();
+                        dummyVel.setY(-dummyVel.getY());
+                        dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
-                    // add a constant downward velocity to simulate gravity
-                    dummyVel.add(new Vector(0, 0.3, 0));
+                        // add a constant downward velocity to simulate gravity
+                        dummyVel.add(new Vector(0, 0.3, 0));
 
-                    dummy.setVelocity(dummyVel);
+                        dummy.setVelocity(dummyVel);
+                    }
                 }).isCancelled();
             }
         }
