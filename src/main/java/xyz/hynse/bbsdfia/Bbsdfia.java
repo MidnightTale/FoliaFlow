@@ -1,6 +1,6 @@
 package xyz.hynse.bbsdfia;
 
-import com.tcoded.folialib.*;
+import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
