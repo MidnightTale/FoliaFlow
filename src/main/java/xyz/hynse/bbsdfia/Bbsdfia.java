@@ -5,7 +5,6 @@ import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,13 +37,9 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
-            foliaLib.getImpl().runAtEntity(entity, () -> {/* Code */
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()+0.5);
-                spawnLoc.setZ(spawnLoc.getZ()+0.5);
-
+                Location spawnLoc = new Location(Bukkit.getWorld("world_the_end"), 100, 50 ,0);
+                foliaLib.getImpl().runAtEntity(entity, () -> {
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
                 Vector dummyVel = vel.clone();
                 dummyVel.setY(-dummyVel.getY());
@@ -54,8 +49,8 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, 0.3, 0));
 
                 dummy.setVelocity(dummyVel);
+                });
             }
-            });
         }
     }
 
