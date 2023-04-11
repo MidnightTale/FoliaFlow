@@ -1,7 +1,6 @@
 package xyz.hynse.bbsdfia;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -10,7 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
+
+import java.util.Objects;
 
 public class Bbsdfia extends JavaPlugin implements Listener {
 
@@ -45,46 +45,13 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         if (event.getEntityType() == EntityType.FALLING_BLOCK) {
             // Spawn a new falling block at the same location as the old one
             World world = Bukkit.getWorld("world_the_end"); // specify the world to spawn in
-            FallingBlock newBlock = world.spawnFallingBlock(block.getLocation(), ((FallingBlock) event.getEntity()).getBlockData());
+            FallingBlock newBlock = Objects.requireNonNull(world).spawnFallingBlock(block.getLocation(), ((FallingBlock) event.getEntity()).getBlockData());
 
             // Set the same velocity as the old block
-            newBlock.setVelocity(((FallingBlock) event.getEntity()).getVelocity());
+            newBlock.setVelocity(event.getEntity().getVelocity());
             // Set the same custom name as the old block
-            newBlock.setCustomName(((FallingBlock) event.getEntity()).getCustomName());
+            newBlock.setCustomName(event.getEntity().getCustomName());
         }
     }
 
-    // This function returns the block that the entity is moving towards
-    Block getBlockMovingTo(Location loc, Vector vel) {
-        // Initialize variables to keep track of the maximum absolute velocity and its direction
-        double absMax = 0, max = 0;
-        char dir = ' ';
-        Block relative = null;
-
-        // Check which component of the velocity vector has the highest magnitude
-        if (Math.abs(vel.getX()) > absMax) {
-            max = vel.getX();
-            absMax = Math.abs(vel.getX());
-            dir = 'x';
-        }
-        if (Math.abs(vel.getY()) > absMax) {
-            max = vel.getY();
-            absMax = Math.abs(vel.getY());
-            dir = 'y';
-        }
-        if (Math.abs(vel.getZ()) > absMax) {
-            max = vel.getZ();
-            dir = 'z';
-        }
-
-        // Use the direction with the highest magnitude to determine the block the entity is moving towards
-        switch (dir) {
-            case 'x' -> relative = loc.getBlock().getRelative((int) Math.signum(max), 0, 0);
-            case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
-            case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
-        }
-
-        // Return the block the entity is moving towards
-        return relative;
-    }
 }
