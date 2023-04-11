@@ -12,72 +12,98 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-
 public class Bbsdfia extends JavaPlugin implements Listener {
+
+    // This method is called when the plugin is enabled
     @Override
     public void onEnable() {
         super.onEnable();
+        // Register the plugin to listen to events
         getServer().getPluginManager().registerEvents(this, this);
+        // Log that the plugin has started
         getServer().getLogger().info("Bbsdfia plugin started");
     }
 
+    // This method is called when the plugin is disabled
     @Override
     public void onDisable() {
         super.onDisable();
+        // Log that the plugin has stopped
         getServer().getLogger().info("Bbsdfia plugin stopped");
     }
 
+    // This method is called when a falling block entity changes its block
+    // Register the method as an event handler for the EntityChangeBlockEvent
     @EventHandler
-    public void onFallingBlockToBlock(EntityChangeBlockEvent e){
-        if(e.getEntityType() == EntityType.FALLING_BLOCK){
+    public void onFallingBlockToBlock(EntityChangeBlockEvent e) {
+        // Check if the entity is a falling block
+        if (e.getEntityType() == EntityType.FALLING_BLOCK) {
+            // Get the entity and its location and velocity
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
+
+            // Get the block that the entity is moving towards
             Block movingTo = getBlockMovingTo(loc, vel);
 
-            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+            // If the block it's moving towards is an end portal block
+            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
+                // Get the location of the block and center it
                 Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()+0.5);
-                spawnLoc.setZ(spawnLoc.getZ()+0.5);
+                spawnLoc.setX(spawnLoc.getX() + 0.5);
+                spawnLoc.setY(spawnLoc.getY() + 0.5);
+                spawnLoc.setZ(spawnLoc.getZ() + 0.5);
 
+                // Spawn a new falling block entity at the center of the end portal block
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+
+                // Copy the velocity of the original entity and invert the y component
                 Vector dummyVel = vel.clone();
                 dummyVel.setY(-dummyVel.getY());
-                dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
-                // add a constant downward velocity to simulate gravity
+                // Double the velocity of the new entity
+                dummyVel.multiply(new Vector(2, 2, 2));
+
+                // Add a constant downward velocity to simulate gravity
                 dummyVel.add(new Vector(0, 0.3, 0));
 
+                // Set the velocity of the new entity to the modified velocity
                 dummy.setVelocity(dummyVel);
             }
         }
     }
 
-
-    Block getBlockMovingTo(Location loc, Vector vel){
+    // This function returns the block that the entity is moving towards
+    Block getBlockMovingTo(Location loc, Vector vel) {
+        // Initialize variables to keep track of the maximum absolute velocity and its direction
         double absMax = 0, max = 0;
         char dir = ' ';
         Block relative = null;
-        if(Math.abs(vel.getX()) > absMax){
+
+        // Check which component of the velocity vector has the highest magnitude
+        if (Math.abs(vel.getX()) > absMax) {
             max = vel.getX();
             absMax = Math.abs(vel.getX());
             dir = 'x';
         }
-        if(Math.abs(vel.getY()) > absMax){
+        if (Math.abs(vel.getY()) > absMax) {
             max = vel.getY();
             absMax = Math.abs(vel.getY());
             dir = 'y';
         }
-        if(Math.abs(vel.getZ()) > absMax){
+        if (Math.abs(vel.getZ()) > absMax) {
             max = vel.getZ();
             dir = 'z';
         }
+
+        // Use the direction with the highest magnitude to determine the block the entity is moving towards
         switch (dir) {
             case 'x' -> relative = loc.getBlock().getRelative((int) Math.signum(max), 0, 0);
             case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
             case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
         }
+
+        // Return the block the entity is moving towards
         return relative;
     }
 }
