@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -58,8 +59,23 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     getLogger().info("Current world: " + currentWorld.getName());
                     getLogger().info("End world: " + endWorld.getName());
                     getLogger().info("New location: " + "World/" + location.getWorld() + " (X:" + location.getX() + " Y:" + location.getY() + " Z:" + location.getZ() + ")");
+                    World world = endWorld;
+                    Location blockLocation = location;
+                    BlockData blockData = e.getBlock().getBlockData();
+                    Material material = blockData.getMaterial();
+                    BlockData fallingBlockData = material.createBlockData();
+                    FallingBlock fallingBlock = world.spawnFallingBlock(blockLocation, fallingBlockData);
+
+                    logger.info("XoaN " + "world=" + world.getName() + ", blockLocation=" + blockLocation.toString() + ", blockData=" + blockData.getAsString() + ", material=" + material.name() + ", fallingBlockData=" + fallingBlockData.getAsString() + ", fallingBlock=" + fallingBlock.getUniqueId().toString());
+                    //getLogger().info("XoaT " + endWorld.spawnEntity(location, EntityType.FALLING_BLOCK));
+                    //getLogger().info("XoaN " + endWorld.spawnFallingBlock(location, e.getBlock().getBlockData().getMaterial().createBlockData()));
+
+                    /*
                     FallingBlock fallingBlock = endWorld.spawnFallingBlock(location, e.getBlock().getBlockData().getMaterial().createBlockData());
+                    FallingBlock fallingBlock = (FallingBlock) endWorld.spawnEntity(location, EntityType.FALLING_BLOCK);
+
                     fallingBlock.setVelocity(vel);
+                    */
                 } catch (Exception ex) {
                     getLogger().severe("Error spawning falling block entity: " + ex.getMessage());
                     ex.printStackTrace();
