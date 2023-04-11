@@ -45,7 +45,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 getLogger().info("Falling block detected near end portal");
 
                 //Entity Scheduler Task
-                foliaLib.getImpl().runAtEntity(entity, () -> {
+                //foliaLib.getImpl().runAtEntity(entity, () -> {
                     // Debug message
                     getLogger().info("Spawning falling block in the end dimension");
 
@@ -66,7 +66,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     dummy.setVelocity(new Vector(1, 0, 0));
                     //velocity to west
                     dummy.setVelocity(new Vector(-1, 0, 0));
-                });
+                //});
             }
         }
     }
