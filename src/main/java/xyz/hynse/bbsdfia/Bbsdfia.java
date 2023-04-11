@@ -57,7 +57,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     getLogger().info("Current world: " + currentWorld.getName());
                     getLogger().info("End world: " + endWorld.getName());
                     Location location = new Location(endWorld, loc.getX(), loc.getY(), loc.getZ());
-                    FallingBlock fallingBlock = endWorld.spawnFallingBlock(location, ((FallingBlock) endWorld).getBlockData());
+                    FallingBlock fallingBlock = endWorld.spawnFallingBlock(location, e.getBlock().getBlockData());
                     fallingBlock.setVelocity(vel);
                 } catch (Exception ex) {
                     getLogger().severe("Error spawning falling block entity: " + ex.getMessage());
