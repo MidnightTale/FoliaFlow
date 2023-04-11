@@ -42,6 +42,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             // Get the entity and its location and velocity
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
+            Location spawnlocation = new Location(Bukkit.getWorld("world_the_end"), 100, 50, 0);
             Vector vel = entity.getVelocity();
 
             // Get the block that the entity is moving towards
@@ -49,14 +50,9 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
             // If the block it's moving towards is an end portal block
             if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
-                // Get the location of the block and center it
-                Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX() + 0.5);
-                spawnLoc.setY(spawnLoc.getY() + 0.5);
-                spawnLoc.setZ(spawnLoc.getZ() + 0.5);
 
                 // Spawn a new falling block entity at the center of the end portal block
-                FallingBlock dummy = Bukkit.getServer().getWorld("world_the_end").spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+                FallingBlock dummy = Bukkit.getServer().getWorld("world_the_end").spawnFallingBlock(spawnlocation, ((FallingBlock) entity).getBlockData());
 
                 // Copy the velocity of the original entity and invert the y component
                 Vector dummyVel = vel.clone();
