@@ -50,33 +50,23 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Block movingTo = getBlockMovingTo(loc, vel);
             // If the block it's moving towards is an end portal block
             if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
-
-                // Spawn a new falling block entity in the end
-                Location location = new Location(Bukkit.getWorld("world_the_end"), 100, 50, 0);
-                System.out.println("§6[DEBUG] §7Spawning new falling block at " + location);
-                System.out.println("§6[DEBUG] §7Original entity: " + entity);
-                System.out.println("§6[DEBUG] §7Moving towards: " + movingTo);
-                System.out.println("§6[DEBUG] §7Original velocity: " + vel);
-
-                FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, Material.STONE.createBlockData());
-                System.out.println("§6[DEBUG] §7New falling block entity: " + fallingBlock);
-
-                // Copy the velocity of the original entity and invert the y component
-                Vector dummyVel = vel.clone();
-                dummyVel.setY(-dummyVel.getY());
-
-                // Double the velocity of the new entity
-                dummyVel.multiply(new Vector(2, 2, 2));
-
-                // Add a constant upward velocity to simulate gravity
-                dummyVel.add(new Vector(0, 0.3, 0));
-                System.out.println("§6[DEBUG] §7Modified velocity: " + dummyVel);
-
-                // Set the velocity of the new entity to the modified velocity
-                fallingBlock.setVelocity(dummyVel);
+                try {
+                    // Spawn a new falling block entity in the end
+                    World endWorld = Bukkit.getWorld("world_the_end");
+                    World currentWorld = entity.getWorld();
+                    getLogger().info("Current world: " + currentWorld.getName());
+                    getLogger().info("End world: " + endWorld.getName());
+                    Location location = new Location(endWorld, loc.getX(), loc.getY(), loc.getZ());
+                    FallingBlock fallingBlock = endWorld.spawnFallingBlock(location, ((FallingBlock) location.getWorld()).getBlockData());
+                    fallingBlock.setVelocity(vel);
+                } catch (Exception ex) {
+                    getLogger().severe("Error spawning falling block entity: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
             }
         }
     }
+
 
 
     // This function returns the block that the entity is moving towards
