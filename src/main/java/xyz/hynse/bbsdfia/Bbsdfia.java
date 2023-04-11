@@ -1,6 +1,6 @@
 package xyz.hynse.bbsdfia;
 
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,10 +44,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 World world = Bukkit.getServer().getWorld("world");
                 Location spawnLoc = new Location(world, 100, 50, 0);
                 */
-                Bukkit.getAsyncScheduler().runNow(this, new Consumer<ScheduledTask>() {
-                    @Override
-                    public void accept(ScheduledTask task) {
-                        FallingBlock dummy = (FallingBlock) loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData()).getScheduler();
+                        FallingBlock dummy = (FallingBlock) loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData()).getScheduler().run(plu);
                         Vector dummyVel = vel.clone();
                         dummyVel.setY(-dummyVel.getY());
                         dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
@@ -56,8 +53,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                         dummyVel.add(new Vector(0, 0.3, 0));
 
                         dummy.setVelocity(dummyVel);
-                    }
-                }).isCancelled();
+
             }
         }
     }
