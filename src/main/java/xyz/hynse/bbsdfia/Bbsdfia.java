@@ -52,17 +52,14 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
 
                 // Spawn a new falling block entity in the end
-
                 Location location = new Location(Bukkit.getWorld("world_the_end"), 100, 50, 0);
-                System.out.println("Debug location:" + location);
-                System.out.println("Debug vel:" + vel);
-                System.out.println("Debug entity:" + entity);
-                System.out.println("Debug movingTo:" + movingTo);
-                System.out.println("Debug vel:" + vel);
-                System.out.println("Debug vel:" + vel);
-                FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, Material.STONE.createBlockData());
-                System.out.println("Debung falling:" + fallingBlock);
+                System.out.println("§6[DEBUG] §7Spawning new falling block at " + location);
+                System.out.println("§6[DEBUG] §7Original entity: " + entity);
+                System.out.println("§6[DEBUG] §7Moving towards: " + movingTo);
+                System.out.println("§6[DEBUG] §7Original velocity: " + vel);
 
+                FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, Material.STONE.createBlockData());
+                System.out.println("§6[DEBUG] §7New falling block entity: " + fallingBlock);
 
                 // Copy the velocity of the original entity and invert the y component
                 Vector dummyVel = vel.clone();
@@ -73,13 +70,14 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
                 // Add a constant upward velocity to simulate gravity
                 dummyVel.add(new Vector(0, 0.3, 0));
-                System.out.println("Debung dummyVel:" + dummyVel);
+                System.out.println("§6[DEBUG] §7Modified velocity: " + dummyVel);
 
                 // Set the velocity of the new entity to the modified velocity
                 fallingBlock.setVelocity(dummyVel);
             }
         }
     }
+
 
     // This function returns the block that the entity is moving towards
     Block getBlockMovingTo(Location loc, Vector vel) {
