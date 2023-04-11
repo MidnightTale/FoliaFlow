@@ -5,6 +5,7 @@ import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -36,7 +37,8 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
-            Location loc2 = new Location(Bukkit.getWorld("world_the_end"), 100, 50, 0);
+            World end = Bukkit.getWorld("world_the_end");
+            Location location = new Location(end, 100, 5, 0);
             FoliaLib foliaLib = new FoliaLib(this);
 
 
@@ -51,7 +53,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
                     //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
 
-                    FallingBlock dummy = loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData());
+                    FallingBlock dummy = end.spawnFallingBlock(location, ((FallingBlock) entity).getBlockData());
                     Vector dummyVel = vel.clone();
                     dummy.setVelocity(dummyVel);
 
