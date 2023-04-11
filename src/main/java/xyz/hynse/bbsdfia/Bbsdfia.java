@@ -2,6 +2,7 @@ package xyz.hynse.bbsdfia;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -9,10 +10,16 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Bbsdfia extends JavaPlugin implements Listener {
+    private final Map<Entity, Vector> teleportedFallingBlocks = new HashMap<>();
+
     @Override
     public void onEnable() {
         super.onEnable();
@@ -35,20 +42,34 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Block movingTo = getBlockMovingTo(loc, vel);
 
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                Location spawnLoc = new Location(loc.getWorld(), 0, 80, 0);
+                Location spawnLoc = movingTo.getLocation();
+                spawnLoc.setX(spawnLoc.getX()+0.5);
+                spawnLoc.setY(spawnLoc.getY()+0.5);
+                spawnLoc.setZ(spawnLoc.getZ()+0.5);
 
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
-                Vector dummyVel = vel.clone();
-                dummyVel.setY(-dummyVel.getY());
-                dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
-                // add a constant downward velocity to simulate gravity
-                dummyVel.add(new Vector(1.5, 0.15, 0));
+                // Store the velocity of the falling block entity
+                teleportedFallingBlocks.put(dummy, vel.clone());
 
-                dummy.setVelocity(dummyVel);
+                // Set the velocity of the dummy entity to 0 to prevent it from moving
+                dummy.setVelocity(new Vector(0, 0, 0));
             }
         }
     }
+
+    @EventHandler
+    public void onEntityTeleport(EntityTeleportEvent e) {
+        Entity entity = e.getEntity();
+        if (entity.getType() == EntityType.FALLING_BLOCK && e.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
+            // Check if the falling block entity has been teleported through the end portal
+            if (teleportedFallingBlocks.containsKey(entity)) {
+                Vector vel = teleportedFallingBlocks.remove(entity);
+                entity.setVelocity(vel);
+            }
+        }
+    }
+
 
     Block getBlockMovingTo(Location loc, Vector vel){
         double absMax = 0, max = 0;
