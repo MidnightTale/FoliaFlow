@@ -1,8 +1,5 @@
 package xyz.hynse.bbsdfia;
 
-import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,13 +9,8 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 
 public class Bbsdfia extends JavaPlugin implements Listener {
@@ -42,52 +34,22 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
-            Location loc2 = new Location(Bukkit.getWorld("world_the_end"), 100, 50, 0);
-
 
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                /*
-                World world = Bukkit.getServer().getWorld("world");
-                Location spawnLoc = new Location(world, 100, 50, 0);
-                */
-                //Entity Scheduler Task
-                EntityScheduler scheduler = new EntityScheduler() {
-                    @Override
-                    public boolean execute(@NotNull Plugin plugin, @NotNull Runnable run, @Nullable Runnable retired, long delay) {
-                        return false;
-                    }
+                Location spawnLoc = movingTo.getLocation();
+                spawnLoc.setX(spawnLoc.getX()+0.5);
+                spawnLoc.setY(spawnLoc.getY()+0.5);
+                spawnLoc.setZ(spawnLoc.getZ()+0.5);
 
-                    @Override
-                    public @Nullable ScheduledTask run(@NotNull Plugin plugin, @NotNull Consumer<ScheduledTask> task, @Nullable Runnable retired) {
-                        return null;
-                    }
+                FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+                Vector dummyVel = vel.clone();
+                dummyVel.setY(-dummyVel.getY());
+                dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
 
-                    @Override
-                    public @Nullable ScheduledTask runDelayed(@NotNull Plugin plugin, @NotNull Consumer<ScheduledTask> task, @Nullable Runnable retired, long delayTicks) {
-                        return null;
-                    }
+                // add a constant downward velocity to simulate gravity
+                dummyVel.add(new Vector(0, 0.3, 0));
 
-                    @Override
-                    public @Nullable ScheduledTask runAtFixedRate(@NotNull Plugin plugin, @NotNull Consumer<ScheduledTask> task, @Nullable Runnable retired, long initialDelayTicks, long periodTicks) {
-                        return null;
-                    }
-                };
-                scheduler.runDelayed(this, scheduledTask -> {
-
-                    //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
-                    FallingBlock dummy = (FallingBlock) loc2.getWorld().spawnEntity(loc2, EntityType.FALLING_BLOCK);
-                    Vector dummyVel = vel.clone();
-                    dummy.setVelocity(dummyVel);
-                    //velocity to north
-                    dummy.setVelocity(new Vector(0, 1, 0));
-                    //velocity to south
-                    dummy.setVelocity(new Vector(0, -1, 0));
-                    //velocity to east
-                    dummy.setVelocity(new Vector(1, 0, 0));
-                    //velocity to west
-                    dummy.setVelocity(new Vector(-1, 0, 0));
-                },null,1);
-
+                dummy.setVelocity(dummyVel);
             }
         }
     }
