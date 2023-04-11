@@ -1,5 +1,6 @@
 package xyz.hynse.bbsdfia;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,7 +42,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 World world = Bukkit.getServer().getWorld("world");
                 Location spawnLoc = new Location(world, 100, 50, 0);
                 */
-                Bukkit.getAsyncScheduler().runNow(this, (task) -> {
+                Bukkit.getAsyncScheduler().runNow(this, (ScheduledTask task) -> {
                     FallingBlock dummy = loc2.getWorld().spawnFallingBlock(loc2, ((FallingBlock) entity).getBlockData());
                     Vector dummyVel = vel.clone();
                     dummyVel.setY(-dummyVel.getY());
