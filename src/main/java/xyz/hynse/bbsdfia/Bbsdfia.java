@@ -37,7 +37,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
-            World end = Bukkit.getWorld("world_the_end");
+            World end = Bukkit.getServer().getWorld("world_the_end");
             Location location = new Location(end, 100, 5, 0);
             FoliaLib foliaLib = new FoliaLib(this);
 
