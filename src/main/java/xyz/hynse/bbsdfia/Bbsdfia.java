@@ -59,13 +59,11 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                     getLogger().info("Current world: " + currentWorld.getName());
                     getLogger().info("End world: " + endWorld.getName());
                     getLogger().info("New location: " + "World/" + location.getWorld() + " (X:" + location.getX() + " Y:" + location.getY() + " Z:" + location.getZ() + ")");
-                    World world = endWorld;
                     Location blockLocation = location;
                     BlockData blockData = e.getBlock().getBlockData();
                     Material material = blockData.getMaterial();
                     BlockData fallingBlockData = material.createBlockData();
                     FallingBlock fallingBlock = world.spawnFallingBlock(blockLocation, fallingBlockData);
-                    getLogger().info("XoaN " + "world=" + world.getName() );
                     getLogger().info("XoaN " + "blockLocation=" + blockLocation.toString());
                     getLogger().info("XoaN " + "blockData=" + blockData.getAsString());
                     getLogger().info("XoaN " + "material=" + material.name());
