@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -15,6 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public class Bbsdfia extends JavaPlugin implements Listener {
     @Override
@@ -41,37 +45,37 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location location = new Location(end, 100, 5, 0);
             FoliaLib foliaLib = new FoliaLib(this);
 
-
             if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
                 // Debug message
                 getLogger().info("Falling block detected near end portal");
 
                 //Entity Scheduler Task
                 //foliaLib.getImpl().runAtEntity(entity, () -> {
-                    // Debug message
-                    getLogger().info("Spawning falling block in the end dimension");
+                // Debug message
+                getLogger().info("Spawning falling block in the end dimension");
 
-                    //spawn new falling block in the end dimension and have same properties entity type and material same form entity that detect near end portal
+                // Get the material and data of the original falling block
+                Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+                @NotNull BlockData data = ((FallingBlock) entity).getBlockData();
 
-                    FallingBlock dummy = location.getWorld().spawnFallingBlock(location, ((FallingBlock) entity).getBlockData());
-                    Vector dummyVel = vel.clone();
-                    dummy.setVelocity(dummyVel);
+                // Spawn a new falling block in the end dimension with the same material and data
+                FallingBlock dummy = end.spawnFallingBlock(location, Bukkit.createBlockData(material, (Consumer<BlockData>) data));
+                Vector dummyVel = vel.clone();
+                dummy.setVelocity(dummyVel);
 
-                    // Debug message
-                    getLogger().info("Setting velocity for the dummy falling block");
+                // Debug message
+                getLogger().info("Setting velocity for the dummy falling block");
 
-                    //velocity to north
-                    dummy.setVelocity(new Vector(0, 1, 0));
-                    //velocity to south
-                    dummy.setVelocity(new Vector(0, -1, 0));
-                    //velocity to east
-                    dummy.setVelocity(new Vector(1, 0, 0));
-                    //velocity to west
-                    dummy.setVelocity(new Vector(-1, 0, 0));
+                // Set the velocity of the dummy falling block
+                dummy.setVelocity(new Vector(0, 1, 0));
+                //dummy.setVelocity(new Vector(0, -1, 0));  // Uncomment this line if you want the block to fall downwards
+                //dummy.setVelocity(new Vector(1, 0, 0));   // Uncomment these lines if you want the block to move horizontally
+                //dummy.setVelocity(new Vector(-1, 0, 0));
                 //});
             }
         }
     }
+
 
 
     Block getBlockMovingTo(Location loc, Vector vel){
