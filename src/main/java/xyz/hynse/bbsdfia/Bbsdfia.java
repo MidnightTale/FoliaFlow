@@ -1,6 +1,5 @@
 package xyz.hynse.bbsdfia;
 
-import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-
-import java.util.concurrent.TimeUnit;
 
 public class Bbsdfia extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
@@ -53,7 +50,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 spawnLoc.setY(spawnLoc.getY() + 0.5);
                 spawnLoc.setZ(spawnLoc.getZ() + 0.5);
 
-                // Spawn the first falling block immediately
+                // Spawn the falling block immediately
                 FallingBlock overworldfallingblock = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
                 Vector dummyVel = vel.clone();
                 dummyVel.setY(-dummyVel.getY());
@@ -76,8 +73,8 @@ public class Bbsdfia extends JavaPlugin implements Listener {
 
         // Spawn a new falling block entity with velocity
         entity.remove();
-        Location fuck = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
-        fuck.getBlock().setType(Material.AIR);
+        Location block = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
+        block.getBlock().setType(Material.AIR);
         World world = entity.getWorld();
         Location location = entity.getLocation();
         byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
