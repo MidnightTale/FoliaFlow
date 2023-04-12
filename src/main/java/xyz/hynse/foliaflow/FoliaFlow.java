@@ -22,18 +22,12 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity4 = new Vector(1, 0.5, 0);
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
-    private final Set<Location> movingBlocks = new HashSet<>();
-    private World endWorld;
-    private Location obsidianLocation;
-
+    //private final Set<Location> movingBlocks = new HashSet<>();
 
 
     @Override
     public void onEnable() {
         super.onEnable();
-        endWorld = getServer().getWorld("world_the_end"); // change "world_the_end" to the name of your end world
-        obsidianLocation = new Location(endWorld, 100, 48, 0); // change the coordinates to the location of your obsidian platform
-
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
@@ -117,7 +111,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                     entity.setVelocity(velocity);
 
                     // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
-                    getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
+                    //getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
                 }
             }
         }
