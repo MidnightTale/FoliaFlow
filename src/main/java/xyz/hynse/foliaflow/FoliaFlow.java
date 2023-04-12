@@ -52,6 +52,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         debug("Plugin stopped successfully!");
     }
 
+    /*
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
         Block obsidianBlock = obsidianLocation.getBlock();
@@ -65,7 +66,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         if (event.getBlock().getLocation().equals(obsidianLocation)) { // check if the block change event is for the obsidian block location
             event.setCancelled(true); // cancel the event to prevent the obsidian block from changing
         }
-    }
+    }*/
 
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
