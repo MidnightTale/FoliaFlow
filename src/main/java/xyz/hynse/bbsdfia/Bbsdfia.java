@@ -37,6 +37,19 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         super.onDisable();
         getServer().getLogger().info("Bbsdfia plugin stopped");
     }
+    public void setBlockInEndDimension(Location location) {
+        if (!location.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
+            // The location is not in the End dimension
+            return;
+        }
+
+        Block block = location.getBlock();
+        if (block.getType() != Material.AIR) {
+            // The block is not already air
+            block.setType(Material.AIR);
+        }
+    }
+
 
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
@@ -73,32 +86,20 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof FallingBlock)) {
-            Location location = new Location(getWorld("world_the_end"), 100, 49, 0);
-
-            String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", location.getBlockX(), location.getBlockY(), location.getBlockZ());
-
-            Bukkit.getScheduler().runTaskAsynchronously(this, () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString));
             return;
         }
         if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
-            Location location = new Location(getWorld("world_the_end"), 100, 49, 0);
-
-            String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", location.getBlockX(), location.getBlockY(), location.getBlockZ());
-
-            Bukkit.getScheduler().runTaskAsynchronously(this, () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString));
             return;
         }
 
-        Location locationx = new Location(getWorld("world_the_end"), 100, 49, 0);
-
-        String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", locationx.getBlockX(), locationx.getBlockY(), locationx.getBlockZ());
-
-        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString);
         // Spawn a new falling block entity with velocity
+
         World world = entity.getWorld();
         Location location = entity.getLocation();
         byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
         Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+        Location locationblock = new Location(world, 100,49 ,0);
+        setBlockInEndDimension(locationblock);
 
         int index = counter % 4;
         Vector velocity = velocities[index];
