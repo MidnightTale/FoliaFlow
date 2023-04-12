@@ -8,6 +8,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -93,7 +94,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
 
     @EventHandler
-    public void onChunkLoadend(ChunkLoadEvent e) {
+    public void onChunkLoadend(ChunkEvent e) {
         Chunk chunk = e.getChunk();
         World world = chunk.getWorld();
         if (world.getEnvironment() == World.Environment.THE_END) {
