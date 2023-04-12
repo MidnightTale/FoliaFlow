@@ -1,5 +1,6 @@
 package xyz.hynse.bbsdfia;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -9,12 +10,41 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 public class Bbsdfia extends JavaPlugin implements Listener {
+    private static final Material[] BLOCK_TYPES = {
+            Material.BLACK_CONCRETE_POWDER,
+            Material.BLUE_CONCRETE_POWDER,
+            Material.BROWN_CONCRETE_POWDER,
+            Material.CYAN_CONCRETE_POWDER,
+            Material.GRAY_CONCRETE_POWDER,
+            Material.GREEN_CONCRETE_POWDER,
+            Material.LIGHT_BLUE_CONCRETE_POWDER,
+            Material.LIGHT_GRAY_CONCRETE_POWDER,
+            Material.LIME_CONCRETE_POWDER,
+            Material.MAGENTA_CONCRETE_POWDER,
+            Material.ORANGE_CONCRETE_POWDER,
+            Material.PINK_CONCRETE_POWDER,
+            Material.PURPLE_CONCRETE_POWDER,
+            Material.RED_CONCRETE_POWDER,
+            Material.WHITE_CONCRETE_POWDER,
+            Material.YELLOW_CONCRETE_POWDER,
+            Material.DRAGON_EGG,
+            Material.GRAVEL,
+            Material.RED_SAND,
+            Material.SAND
+    };
+
+    private static final Vector VELOCITY_SOUTH = new Vector(0, 0, -1);
+    private static final Vector VELOCITY_EAST = new Vector(1, 0, 0);
+    private static final Vector VELOCITY_NORTH = new Vector(0, 0, 1);
+
+    private static final Location START_LOCATION = new Location(Bukkit.getWorld("world_the_end"), 101, 49, 1);
+    private static final Location END_LOCATION = new Location(Bukkit.getWorld("world_the_end"), 99, 51, -1);
     @Override
     public void onEnable() {
         super.onEnable();
@@ -54,22 +84,36 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         }
     }
     @EventHandler
-    public void onBlockPhysics(BlockPhysicsEvent event) {
+    public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        World world = block.getWorld();
-        if (world.getEnvironment() == World.Environment.THE_END &&
-                block.getType().hasGravity() &&
-                block.getX() >= 101 && block.getX() <= 99 &&
-                block.getY() >= 49 && block.getY() <= 51 &&
-                block.getZ() >= -1 && block.getZ() <= 1) {
-            // Turn the block into a falling block
-            block.setType(Material.AIR);
-            Location location = block.getLocation().add(0.5, 0.5, 0.5);
-            FallingBlock fallingBlock = world.spawnFallingBlock(location, block.getBlockData());
-            // Set the velocity of the falling block
-            Vector velocity = new Vector(0, -0.5, 1);
+        if (isTargetBlock(block.getType())) {
+            World world = block.getWorld();
+            FallingBlock fallingBlock = world.spawnFallingBlock(block.getLocation(), block.getBlockData());
+            Vector velocity = getVelocity(block.getLocation());
             fallingBlock.setVelocity(velocity);
+            block.setType(Material.AIR);
         }
+    }
+
+    private boolean isTargetBlock(Material material) {
+        for (Material blockType : BLOCK_TYPES) {
+            if (blockType == material) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Vector getVelocity(Location location) {
+        Vector velocity = null;
+        if (location.getBlockX() == START_LOCATION.getBlockX()) {
+            velocity = VELOCITY_EAST;
+        } else if (location.getBlockZ() == END_LOCATION.getBlockZ()) {
+            velocity = VELOCITY_SOUTH;
+        } else if (location.getBlockX() == END_LOCATION.getBlockX()) {
+            velocity = VELOCITY_NORTH;
+        }
+        return velocity;
     }
 
 
