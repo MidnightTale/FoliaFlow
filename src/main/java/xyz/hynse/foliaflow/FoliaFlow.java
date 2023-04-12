@@ -94,7 +94,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
 
     @EventHandler
-    public void onChunkLoadend(ChunkEvent e) {
+    public void onChunkLoadend(ChunkLoadEvent e) {
         Chunk chunk = e.getChunk();
         World world = chunk.getWorld();
         if (world.getEnvironment() == World.Environment.THE_END) {
