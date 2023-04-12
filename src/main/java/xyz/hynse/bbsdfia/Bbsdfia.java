@@ -1,5 +1,6 @@
 package xyz.hynse.bbsdfia;
 
+import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +24,13 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     private int counter = 0;
 
 
-
+/*
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getLogger().info("Bbsdfia plugin started");
+    }*/
     @Override
     public void onEnable() {
         super.onEnable();
@@ -65,14 +72,15 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     }*/
 
     @EventHandler
-    public void onFallingBlockToBlock(EntityChangeBlockEvent e){
-        if(e.getEntityType() == EntityType.FALLING_BLOCK){
+    public void onFallingBlockToBlock(EntityChangeBlockEvent e) {
+        if (e.getEntityType() == EntityType.FALLING_BLOCK) {
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
+            FoliaLib foliaLib = new FoliaLib(this);
 
-            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
                 Location spawnLoc = movingTo.getLocation();
                 spawnLoc.setX(spawnLoc.getX()+0.5);
                 spawnLoc.setY(spawnLoc.getY()+0.5);
@@ -86,81 +94,32 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, -0.2, 0));
                 firstBlock.setVelocity(dummyVel);
 
-                // Schedule the spawning of the other two falling blocks with a delay
-                Bukkit.getScheduler().runTaskLater(this, () -> {
-                    for(int i = 0; i < 2; i++){
+                foliaLib.getImpl().runAtLocation(spawnLoc, () -> {
+                    for (int i = 0; i < 2; i++) {
                         Location spawnLoc1 = movingTo.getLocation();
-                        spawnLoc1.setX(spawnLoc1.getX()+0.5);
-                        spawnLoc1.setY(spawnLoc1.getY()+0.5);
-                        spawnLoc1.setZ(spawnLoc1.getZ()+0.5);
+                        spawnLoc1.setX(spawnLoc1.getX() + 0.5);
+                        spawnLoc1.setY(spawnLoc1.getY() + 0.5);
+                        spawnLoc1.setZ(spawnLoc1.getZ() + 0.5);
 
-                        FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc1, ((FallingBlock) entity).getBlockData());
+                        FallingBlock fallingBlock = (FallingBlock) entity;
+                        FallingBlock dummy = spawnLoc1.getWorld().spawnFallingBlock(spawnLoc1, fallingBlock.getBlockData());
                         Vector dummyVel1 = vel.clone();
                         dummyVel1.setY(-dummyVel1.getY());
                         dummyVel1.multiply(new Vector(2, 2, 2));
                         dummyVel1.add(new Vector(0, -0.2, 0));
                         dummy.setVelocity(dummyVel1);
                     }
-                }, 10);
+                });
             }
         }
     }
 
 
+
+
+
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof FallingBlock)) {
-            return;
-        }
-        if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
-            return;
-        }
-
-        // Spawn a new falling block entity with velocity
-        entity.remove();
-        Location fuck = new Location(Bukkit.getWorld("world_the_end"), 100, 49 ,0);
-        fuck.getBlock().setType(Material.AIR);
-        World world = entity.getWorld();
-        Location location = entity.getLocation();
-        byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
-        Material material = ((FallingBlock) entity).getBlockData().getMaterial();
-
-        int index = counter % 4;
-        Vector velocity = velocities[index];
-        counter++;
-
-        FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
-        newFallingBlock.setVelocity(velocity);
-    }
-    @EventHandler
-    public void onEntityChangeBlock2(EntityChangeBlockEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof FallingBlock)) {
-            return;
-        }
-        if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
-            return;
-        }
-
-        // Spawn a new falling block entity with velocity
-        entity.remove();
-        Location fuck = new Location(Bukkit.getWorld("world_the_end"), 100, 49 ,0);
-        fuck.getBlock().setType(Material.AIR);
-        World world = entity.getWorld();
-        Location location = entity.getLocation();
-        byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
-        Material material = ((FallingBlock) entity).getBlockData().getMaterial();
-
-        int index = counter % 4;
-        Vector velocity = velocities[index];
-        counter++;
-
-        FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
-        newFallingBlock.setVelocity(velocity);
-    }
-    @EventHandler
-    public void onEntityChangeBlock1(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof FallingBlock)) {
             return;

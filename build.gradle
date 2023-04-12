@@ -16,10 +16,15 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+    maven {
+        name = "devmart-other"
+        url = "https://nexuslite.gcnt.net/repos/other/"
+    }
 }
 
 dependencies {
     compileOnly "dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT"
+    implementation "com.tcoded:FoliaLib:0.2.0"
 }
 
 def targetJavaVersion = 17
