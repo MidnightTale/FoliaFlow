@@ -2,11 +2,16 @@ plugins {
     id 'java'
 }
 
+
 group = 'xyz.hynse'
 version = '1.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        name = "devmart-other"
+        url = "https://nexuslite.gcnt.net/repos/other/"
+    }
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
@@ -15,14 +20,12 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
-    maven {
-        name = "devmart-other"
-        url = "https://nexuslite.gcnt.net/repos/other/"
-    }
 }
 
 dependencies {
-    compileOnly "dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT"}
+    implementation "com.tcoded:FoliaLib:0.2.0"
+    compileOnly "dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT"
+}
 
 def targetJavaVersion = 17
 java {

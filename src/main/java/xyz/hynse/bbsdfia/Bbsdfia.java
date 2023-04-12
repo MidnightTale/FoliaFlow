@@ -1,10 +1,8 @@
 package xyz.hynse.bbsdfia;
 
-
-import com.tcoded.folialib.FoliaLib;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -21,7 +19,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getLogger().info("Bbsdfia plugin started");
-
     }
 
     @Override
@@ -29,7 +26,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         super.onDisable();
         getServer().getLogger().info("Bbsdfia plugin stopped");
     }
-    FoliaLib foliaLib = new FoliaLib(this);
+
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() == EntityType.FALLING_BLOCK){
@@ -37,23 +34,38 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
+
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                Location spawnLoc = new Location(Bukkit.getWorld("world_the_end"), 100, 50 ,0);
-                foliaLib.getImpl().runAtEntity(entity, () -> {
+                Location spawnLoc = movingTo.getLocation();
+                spawnLoc.setX(spawnLoc.getX()+0.5);
+                spawnLoc.setY(spawnLoc.getY()+0.5);
+                spawnLoc.setZ(spawnLoc.getZ()+0.5);
+
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
                 Vector dummyVel = vel.clone();
                 dummyVel.setY(-dummyVel.getY());
-                dummyVel.multiply(new Vector(2, 2, 2)); // double the velocity
+                dummyVel.multiply(new Vector(2, 2, 2));
 
-                // add a constant downward velocity to simulate gravity
-                dummyVel.add(new Vector(0, 0.3, 0));
+                dummyVel.add(new Vector(0, -0.2, 0));
 
                 dummy.setVelocity(dummyVel);
-                });
             }
         }
     }
-
+    @EventHandler
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        if (event.getEntity() instanceof FallingBlock fallingBlock) {
+            if (fallingBlock.getWorld().getEnvironment() == World.Environment.THE_END) {
+                Location blockLocation = fallingBlock.getLocation();
+                blockLocation.setY(blockLocation.getY() + 1);
+                if (blockLocation.getBlock().getType() == Material.AIR) {
+                    Vector velocity = fallingBlock.getVelocity();
+                    velocity.setY(5);
+                    fallingBlock.setVelocity(velocity);
+                }
+            }
+        }
+    }
 
 
     Block getBlockMovingTo(Location loc, Vector vel){
