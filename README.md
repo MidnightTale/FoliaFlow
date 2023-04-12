@@ -16,4 +16,4 @@ If you would like to contribute to EndBlockPorter, feel free to submit a pull re
 
 ## License
 
-This plugin is licensed under the MIT license. See LICENSE.md for more information.
+This plugin is licensed under the MIT license. See [LICENSE.md](https://github.com/Hynse/FoliaFlow/blob/master/LICENSE.md) for more information.
