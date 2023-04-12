@@ -41,7 +41,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() == EntityType.FALLING_BLOCK){
-
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
@@ -61,7 +60,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, -0.2, 0));
 
                 dummy.setVelocity(dummyVel);
-                dummy.remove();
             }
         }
     }
@@ -70,9 +68,11 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof FallingBlock)) {
+            entity.remove();
             return;
         }
         if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
+            entity.remove();
             return;
         }
 
