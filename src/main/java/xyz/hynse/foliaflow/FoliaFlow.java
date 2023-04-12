@@ -24,6 +24,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "   / ____/ ____/ /___ _      __");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "  / /_  / /_  / / __ \\ | /| / /");
@@ -31,12 +32,13 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "/_/   /_/   /_/\\____/|__/|__/  ");
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Plugin started successfully!");
+        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
     }
 
     @Override
     public void onDisable() {
-        super.onDisable();
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "    ______________             ");
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "   / ____/ ____/ /___ _      __");
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "  / /_  / /_  / / __ \\ | /| / /");
@@ -44,6 +46,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "/_/   /_/   /_/\\____/|__/|__/  ");
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Plugin stopped successfully!");
+        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
+        super.onDisable();
     }
 
 
