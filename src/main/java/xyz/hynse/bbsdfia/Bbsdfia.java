@@ -55,18 +55,39 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         if (event.getEntity() instanceof FallingBlock fallingBlock) {
-            if (fallingBlock.getWorld().getEnvironment() == World.Environment.THE_END) {
+            if (fallingBlock.getWorld().getEnvironment() == World.Environment.THE_END && event.getTo() != Material.AIR) {
                 Location blockLocation = fallingBlock.getLocation();
-                blockLocation.setY(blockLocation.getY() + 1);
-                if (blockLocation.getBlock().getType() == Material.AIR) {
-                    Vector velocity = fallingBlock.getVelocity();
-                    velocity.setY(5);
-                    fallingBlock.setVelocity(velocity);
+                if (isInCube(blockLocation, 101, 49, 1, 99, 51, -1)) {
+                    if (fallingBlock.getFallDistance() > 0) {
+                        Vector velocity;
+                        if (fallingBlock.getVelocity().getX() == 0 && fallingBlock.getVelocity().getZ() == 0) {
+                            velocity = new Vector(-1, 0, 0);
+                        } else if (fallingBlock.getVelocity().getX() < 0 && fallingBlock.getVelocity().getZ() == 0) {
+                            velocity = new Vector(0, 0, -1);
+                        } else if (fallingBlock.getVelocity().getX() < 0 && fallingBlock.getVelocity().getZ() < 0) {
+                            velocity = new Vector(1, 0, 0);
+                        } else {
+                            velocity = new Vector(0, 0, 1);
+                        }
+                        fallingBlock.setVelocity(velocity.multiply(0.5));
+                    }
                 }
             }
         }
     }
 
+    private boolean isInCube(Location location, int x1, int y1, int z1, int x2, int y2, int z2) {
+        int minX = Math.min(x1, x2);
+        int minY = Math.min(y1, y2);
+        int minZ = Math.min(z1, z2);
+        int maxX = Math.max(x1, x2);
+        int maxY = Math.max(y1, y2);
+        int maxZ = Math.max(z1, z2);
+
+        return location.getBlockX() >= minX && location.getBlockX() <= maxX
+                && location.getBlockY() >= minY && location.getBlockY() <= maxY
+                && location.getBlockZ() >= minZ && location.getBlockZ() <= maxZ;
+    }
 
     Block getBlockMovingTo(Location loc, Vector vel){
         double absMax = 0, max = 0;
