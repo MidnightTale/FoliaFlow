@@ -71,7 +71,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             fallingBlock.setVelocity(velocity);
         }
     }
-}
+
 
 
     Block getBlockMovingTo(Location loc, Vector vel){
