@@ -11,8 +11,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.util.Objects;
-
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
     private final Vector velocity2 = new Vector(-1, 0.5, 0);
@@ -113,7 +111,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
             case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
         }
-        debug("Moving falling block from location " + loc.toString() + " to location " + Objects.requireNonNull(relative).getLocation());
+        debug("Moving falling block from location " + loc.toString() + " to location " + relative.getLocation());
         return relative;
     }
 
