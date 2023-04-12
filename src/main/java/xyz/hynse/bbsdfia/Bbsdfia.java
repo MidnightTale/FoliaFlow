@@ -1,5 +1,6 @@
 package xyz.hynse.bbsdfia;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,10 +13,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.bukkit.event.entity.EntitySpawnEvent;
+
+import static org.bukkit.Bukkit.getWorld;
 
 public class Bbsdfia extends JavaPlugin implements Listener {
+    private final Vector velocity1 = new Vector(0, 0.5, -1);
+    private final Vector velocity2 = new Vector(-1, 0.5, 0);
+    private final Vector velocity3 = new Vector(0, 0.5, 1);
+    private final Vector velocity4 = new Vector(1, 0.5, 0);
+    private final Vector[] velocities = { velocity1, velocity2, velocity3, velocity4 };
     private int counter = 0;
+
 
     @Override
     public void onEnable() {
@@ -52,6 +60,11 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, -0.2, 0));
 
                 dummy.setVelocity(dummyVel);
+                Location location = new Location(getWorld("world_the_end"), 100, 49, 0);
+
+                String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+
+                Bukkit.getScheduler().runTaskAsynchronously(this, () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString));
             }
         }
     }
@@ -59,23 +72,41 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof FallingBlock && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-            // Spawn a new falling block entity with velocity to the north and upward
-            World world = entity.getWorld();
-            Location location = entity.getLocation();
-            Vector velocity = switch (counter % 4) {
-                case 0 -> new Vector(0, 0.5, -1);
-                case 1 -> new Vector(-1, 0.5, 0);
-                case 2 -> new Vector(0, 0.5, 1);
-                default -> new Vector(1, 0.5, 0);
-            };
-            counter++;
-            Material material = ((FallingBlock) entity).getBlockData().getMaterial();
-            byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
-            FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
-            newFallingBlock.setVelocity(velocity);
-            entity.remove();
+        if (!(entity instanceof FallingBlock)) {
+            Location location = new Location(getWorld("world_the_end"), 100, 49, 0);
+
+            String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString));
+            return;
         }
+        if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
+            Location location = new Location(getWorld("world_the_end"), 100, 49, 0);
+
+            String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString));
+            return;
+        }
+
+        Location locationx = new Location(getWorld("world_the_end"), 100, 49, 0);
+
+        String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", locationx.getBlockX(), locationx.getBlockY(), locationx.getBlockZ());
+
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString);
+        // Spawn a new falling block entity with velocity
+        World world = entity.getWorld();
+        Location location = entity.getLocation();
+        byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
+        Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+
+        int index = counter % 4;
+        Vector velocity = velocities[index];
+        counter++;
+
+        FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
+        newFallingBlock.setVelocity(velocity);
+        entity.remove();
     }
 
 
