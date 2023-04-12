@@ -70,7 +70,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 dummyVel.setY(-dummyVel.getY());
                 dummyVel.multiply(new Vector(2, 1, 2));
 
-                dummyVel.add(new Vector(0, 0.2, 0));
+                dummyVel.add(new Vector(0, 2, 0));
 
                 dummy.setVelocity(dummyVel);
             }
