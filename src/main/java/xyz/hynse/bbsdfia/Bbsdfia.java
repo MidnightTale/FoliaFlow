@@ -14,8 +14,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import static org.bukkit.Bukkit.getWorld;
-
 public class Bbsdfia extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
     private final Vector velocity2 = new Vector(-1, 0.5, 0);
@@ -24,42 +22,37 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     private final Vector[] velocities = { velocity1, velocity2, velocity3, velocity4 };
     private int counter = 0;
 
+    private final Location locationplus = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
+
+
 
     @Override
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getLogger().info("Bbsdfia plugin started");
+        locationplus.getBlock().setType(Material.AIR);
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
         getServer().getLogger().info("Bbsdfia plugin stopped");
-    }
-    public void setBlockInEndDimension(Location location) {
-        if (!location.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
-            // The location is not in the End dimension
-            return;
-        }
-
-        Block block = location.getBlock();
-        if (block.getType() != Material.AIR) {
-            // The block is not already air
-            block.setType(Material.AIR);
-        }
+        locationplus.getBlock().setType(Material.AIR);
     }
 
 
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() == EntityType.FALLING_BLOCK){
+
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
 
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+                locationplus.getBlock().setType(Material.AIR);
                 Location spawnLoc = movingTo.getLocation();
                 spawnLoc.setX(spawnLoc.getX()+0.5);
                 spawnLoc.setY(spawnLoc.getY()+0.5);
@@ -73,11 +66,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, -0.2, 0));
 
                 dummy.setVelocity(dummyVel);
-                Location location = new Location(getWorld("world_the_end"), 100, 49, 0);
-
-                String commandString = String.format("/execute in minecraft:the_end run setblock %d %d %d air", location.getBlockX(), location.getBlockY(), location.getBlockZ());
-
-                Bukkit.getScheduler().runTaskAsynchronously(this, () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandString));
             }
         }
     }
@@ -86,9 +74,11 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof FallingBlock)) {
+            locationplus.getBlock().setType(Material.AIR);
             return;
         }
         if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
+            locationplus.getBlock().setType(Material.AIR);
             return;
         }
 
@@ -98,8 +88,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         Location location = entity.getLocation();
         byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
         Material material = ((FallingBlock) entity).getBlockData().getMaterial();
-        Location locationblock = new Location(world, 100,49 ,0);
-        setBlockInEndDimension(locationblock);
+        locationplus.getBlock().setType(Material.AIR);
 
         int index = counter % 4;
         Vector velocity = velocities[index];
