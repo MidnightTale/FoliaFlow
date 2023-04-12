@@ -72,14 +72,16 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             // Spawn a new falling block entity with velocity to the north and upward
             World world = entity.getWorld();
             Location location = entity.getLocation();
-            Vector velocity = new Vector(0, 1.2, -6);
+            Vector velocity = new Vector(0, 1, -3);
             Material material = ((FallingBlock) entity).getBlockData().getMaterial();
             byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
             FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
             newFallingBlock.setVelocity(velocity);
 
-            // Remove the original falling block entity
-            entity.remove();
+            // Remove the original block
+            Location locationblock = new Location(world, 100, 49, 0);
+            Block block = locationblock.getBlock();
+            block.setType(Material.AIR);
         }
     }
 
