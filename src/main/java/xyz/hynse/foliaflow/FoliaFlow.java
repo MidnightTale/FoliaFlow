@@ -11,12 +11,14 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
     private final Vector velocity2 = new Vector(-1, 0.5, 0);
     private final Vector velocity3 = new Vector(0, 0.5, 1);
     private final Vector velocity4 = new Vector(1, 0.5, 0);
-    private final Vector[] velocities = { velocity1, velocity2, velocity3, velocity4 };
+    private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
 
 
@@ -24,38 +26,31 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "   / ____/ ____/ /___ _      __");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "  / /_  / /_  / / __ \\ | /| / /");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + " / __/ / __/ / / /_/ / |/ |/ / ");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "/_/   /_/   /_/\\____/|__/|__/  ");
-        getServer().getConsoleSender().sendMessage("");
-        getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Plugin started successfully!");
-        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
+        debug("Plugin started successfully!");
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
+        debug("Plugin stopped successfully!");
     }
 
 
-
     @EventHandler
-    public void onFallingBlockToBlock(EntityChangeBlockEvent e){
-        if(e.getEntityType() == EntityType.FALLING_BLOCK){
+    public void onFallingBlockToBlock(EntityChangeBlockEvent e) {
+        if (e.getEntityType() == EntityType.FALLING_BLOCK) {
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
 
-            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
                 Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()+0.5);
-                spawnLoc.setZ(spawnLoc.getZ()+0.5);
+                spawnLoc.setX(spawnLoc.getX() + 0.5);
+                spawnLoc.setY(spawnLoc.getY() + 0.5);
+                spawnLoc.setZ(spawnLoc.getZ() + 0.5);
 
+                debug("Creating dummy falling block at location " + spawnLoc + " with velocity " + vel);
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
                 Vector dummyVel = vel.clone();
                 dummyVel.setY(-dummyVel.getY());
@@ -69,8 +64,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     }
 
 
-
-
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
@@ -80,8 +73,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
             return;
         }
+        debug("EntityChangeBlock event received for falling block at location " + entity.getLocation());
         entity.remove();
-        Location block = new Location(Bukkit.getWorld("world_the_end"), 100, 49 ,0);
+        Location block = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
         block.getBlock().setType(Material.AIR);
         World world = entity.getWorld();
         Location location = entity.getLocation();
@@ -91,26 +85,26 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         int index = counter % 4;
         Vector velocity = velocities[index];
         counter++;
+        debug("Spawning new falling block of material " + material + " at location " + location + " with velocity " + velocity.toString());
         FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
         newFallingBlock.setVelocity(velocity);
     }
 
-
-    Block getBlockMovingTo(Location loc, Vector vel){
+    Block getBlockMovingTo(Location loc, Vector vel) {
         double absMax = 0, max = 0;
         char dir = ' ';
         Block relative = null;
-        if(Math.abs(vel.getX()) > absMax){
+        if (Math.abs(vel.getX()) > absMax) {
             max = vel.getX();
             absMax = Math.abs(vel.getX());
             dir = 'x';
         }
-        if(Math.abs(vel.getY()) > absMax){
+        if (Math.abs(vel.getY()) > absMax) {
             max = vel.getY();
             absMax = Math.abs(vel.getY());
             dir = 'y';
         }
-        if(Math.abs(vel.getZ()) > absMax){
+        if (Math.abs(vel.getZ()) > absMax) {
             max = vel.getZ();
             dir = 'z';
         }
@@ -119,6 +113,11 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
             case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
         }
+        debug("Moving falling block from location " + loc.toString() + " to location " + Objects.requireNonNull(relative).getLocation());
         return relative;
+    }
+
+    private void debug(String message) {
+        getServer().getConsoleSender().sendMessage(ChatColor.GRAY + "[DEBUG] " + message);
     }
 }
