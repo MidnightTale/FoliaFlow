@@ -1,6 +1,5 @@
 package xyz.hynse.foliaflow;
 
-import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -9,7 +8,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -54,14 +53,17 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onEntityMove(EntityMoveEvent event) {
-        handleMove(event.getEntity().getLocation());
+    public void onChunkLoad(ChunkLoadEvent event) {
+        Block obsidianBlock = obsidianLocation.getBlock();
+        if (event.getWorld() == endWorld && obsidianBlock.getType() == Material.OBSIDIAN) { // check if the chunk is in the end and the block is obsidian
+            obsidianBlock.setType(Material.AIR); // set the block to air
+        }
     }
 
-    private void handleMove(Location location) {
-        if (location.getWorld() == endWorld && location.distance(obsidianLocation) <= 1.0) { // check if the location is in the end and within 1 block of the obsidian platform
-            Block obsidianBlock = obsidianLocation.getBlock();
-            obsidianBlock.setType(Material.AIR); // set the block to air
+    @EventHandler
+    public void onBlockChange(org.bukkit.event.block.BlockFromToEvent event) {
+        if (event.getBlock().getLocation().equals(obsidianLocation)) { // check if the block change event is for the obsidian block location
+            event.setCancelled(true); // cancel the event to prevent the obsidian block from changing
         }
     }
 
@@ -96,23 +98,30 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
 
     @EventHandler
-    public void onFallingBlockSpawn(EntitySpawnEvent e) {
-        if (e.getEntityType() == EntityType.FALLING_BLOCK && e.getEntity().getWorld().getEnvironment() == World.Environment.THE_END) {
-            Entity entity = e.getEntity();
-            Location loc = entity.getLocation();
+    public void onChunkLoadend(ChunkLoadEvent e) {
+        Chunk chunk = e.getChunk();
+        World world = chunk.getWorld();
+        if (world.getEnvironment() == World.Environment.THE_END) {
+            // Iterate through all the entities in the chunk
+            for (Entity entity : chunk.getEntities()) {
+                if (entity.getType() == EntityType.FALLING_BLOCK) {
+                    Location loc = entity.getLocation();
 
-            debug("Falling block spawned at location " + loc);
+                    debug("Falling block spawned at location " + loc);
 
-            // Set the initial velocity of the falling block
-            int index = counter % 4;
-            counter ++;
-            Vector velocity = velocities[index];
-            entity.setVelocity(velocity);
+                    // Set the initial velocity of the falling block
+                    int index = counter % 4;
+                    counter ++;
+                    Vector velocity = velocities[index];
+                    entity.setVelocity(velocity);
 
-            // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
-            getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
+                    // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
+                    getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
+                }
+            }
         }
     }
+
 
 
 
