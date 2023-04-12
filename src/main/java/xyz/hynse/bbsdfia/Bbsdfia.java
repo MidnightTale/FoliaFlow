@@ -60,8 +60,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.multiply(new Vector(2, 2, 2));
                 dummyVel.add(new Vector(0, -0.2, 0));
                 overworldfallingblock.setVelocity(dummyVel);
-                Location fuck = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
-                fuck.getBlock().setType(Material.AIR);
             }
         }
     }
