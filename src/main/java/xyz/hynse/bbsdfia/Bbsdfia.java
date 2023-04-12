@@ -42,6 +42,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     private static final Vector VELOCITY_SOUTH = new Vector(0, 0, -1);
     private static final Vector VELOCITY_EAST = new Vector(1, 0, 0);
     private static final Vector VELOCITY_NORTH = new Vector(0, 0, 1);
+    private static final Vector VELOCITY_WEST = new Vector(0, 0, 1);
 
     private static final Location START_LOCATION = new Location(Bukkit.getWorld("world_the_end"), 101, 49, 1);
     private static final Location END_LOCATION = new Location(Bukkit.getWorld("world_the_end"), 99, 51, -1);
@@ -112,6 +113,8 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             velocity = VELOCITY_SOUTH;
         } else if (location.getBlockX() == END_LOCATION.getBlockX()) {
             velocity = VELOCITY_NORTH;
+        } else if (location.getBlockX() == END_LOCATION.getBlockX()) {
+            velocity = VELOCITY_WEST;
         }
         return velocity;
     }
