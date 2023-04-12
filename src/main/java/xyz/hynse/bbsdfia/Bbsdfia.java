@@ -57,7 +57,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent event) {
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof FallingBlock && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
             // Spawn a new falling block entity with velocity to the north and upward
