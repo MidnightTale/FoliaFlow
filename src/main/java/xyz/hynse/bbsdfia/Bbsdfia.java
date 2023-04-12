@@ -5,27 +5,22 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class Bbsdfia extends JavaPlugin implements Listener {
-    private final List<Material> fallingBlockMaterials = Arrays.asList(
-            Material.DRAGON_EGG,
-            Material.GRAVEL,
-            Material.RED_SAND,
-            Material.SAND
-    );
+    private int counter = 0;
+    private Material detectedMaterial = null;
     @Override
     public void onEnable() {
         super.onEnable();
@@ -72,16 +67,50 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             // Spawn a new falling block entity with velocity to the north and upward
             World world = entity.getWorld();
             Location location = entity.getLocation();
-            Vector velocity = new Vector(0, 1, -3);
             Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+            World worldend = Bukkit.getWorld("world_the_end");
+            Location locationblock = new Location(worldend, 100, 49, 0);
+            Block block = locationblock.getBlock();
             byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
+            Vector velocity = switch (counter % 4) {
+                case 0 -> new Vector(0, 0.5, -1);
+                case 1 -> new Vector(-1, 0.5, 0);
+                case 2 -> new Vector(0, 0.5, 1);
+                default -> new Vector(1, 0.5, 0);
+            };
+            counter++;
+
             FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
             newFallingBlock.setVelocity(velocity);
 
             // Remove the original block
-            Location locationblock = new Location(world, 100, 49, 0);
-            Block block = locationblock.getBlock();
             block.setType(Material.AIR);
+        }
+    }
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent event) {
+        Item item = event.getEntity();
+        Location location = item.getLocation();
+
+        // Check if item is in End dimension at (100, 49, 0)
+        if (location.getWorld().getEnvironment() == World.Environment.THE_END &&
+                location.getBlockX() == 100 && location.getBlockY() == 49 && location.getBlockZ() == 0) {
+
+            // Store material type of detected item
+            detectedMaterial = item.getItemStack().getType();
+            // Create block data for falling block entity
+            byte data = ((FallingBlock) item).getBlockData().getAsString().getBytes()[0];
+            Vector velocity = switch (counter % 4) {
+                case 0 -> new Vector(0, 0.5, -1);
+                case 1 -> new Vector(-1, 0.5, 0);
+                case 2 -> new Vector(0, 0.5, 1);
+                default -> new Vector(1, 0.5, 0);
+            };
+            counter++;
+
+            FallingBlock newFallingBlock = item.getWorld().spawnFallingBlock(location, detectedMaterial, data);
+            newFallingBlock.setVelocity(velocity);
+
         }
     }
 
