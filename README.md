@@ -4,7 +4,7 @@ FoliaFlow is a Minecraft plugin that allows players to using gravity block dupli
 
 ## Installation
 
-To install EndBlockPorter, follow these steps:
+To install FoliaFlow, follow these steps:
 
 1. Download the plugin JAR file from the [releases page](https://github.com/Hynse/FoliaFlow).
 2. Copy the JAR file to the `plugins` folder of your Minecraft server.
