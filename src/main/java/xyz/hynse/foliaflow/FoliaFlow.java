@@ -111,11 +111,11 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
             case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
         }
-        debug("Moving falling block from location " + loc.toString() + " to location " + relative.getLocation());
+        debug("Moving falling block from location " + loc.toString() + " to location " + dir);
         return relative;
     }
 
     private void debug(String message) {
-        getServer().getConsoleSender().sendMessage(ChatColor.GRAY + "[DEBUG] " + message);
+        getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "[FoliaFlow] " + message);
     }
 }
