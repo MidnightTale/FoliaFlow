@@ -59,7 +59,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
                 Location spawnLoc = movingTo.getLocation();
                 spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()+0.5);
+                spawnLoc.setY(spawnLoc.getY()-1.5);
                 spawnLoc.setZ(spawnLoc.getZ()+0.5);
 
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
@@ -70,7 +70,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 dummyVel.setY(-dummyVel.getY());
                 dummyVel.multiply(new Vector(2, 2, 2));
 
-                dummyVel.add(new Vector(0, -0.2, 0));
+                dummyVel.add(new Vector(0, 3, 0));
 
                 dummy.setVelocity(dummyVel);
             }
