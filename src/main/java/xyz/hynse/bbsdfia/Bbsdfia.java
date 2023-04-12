@@ -23,6 +23,8 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     private final Vector[] velocities = { velocity1, velocity2, velocity3, velocity4 };
     private int counter = 0;
 
+    FoliaLib foliaLib = new FoliaLib(this);
+
 
 /*
     @Override
@@ -78,7 +80,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
-            FoliaLib foliaLib = new FoliaLib(this);
 
             if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
                 foliaLib.getImpl().runAtLocation(loc, () -> {
@@ -126,9 +127,10 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         int index = counter % 4;
         Vector velocity = velocities[index];
         counter++;
-
+        foliaLib.getImpl().runAtLocation(location, () -> {
         FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
         newFallingBlock.setVelocity(velocity);
+        });
     }
 
 
