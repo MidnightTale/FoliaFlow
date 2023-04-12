@@ -1,6 +1,5 @@
 package xyz.hynse.bbsdfia;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -8,17 +7,16 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.bukkit.event.entity.EntitySpawnEvent;
 
 public class Bbsdfia extends JavaPlugin implements Listener {
     private int counter = 0;
-    private Material detectedMaterial = null;
+
     @Override
     public void onEnable() {
         super.onEnable();
@@ -57,19 +55,14 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             }
         }
     }
+
     @EventHandler
-    public void onFallingBlockLand(EntityChangeBlockEvent event) {
-        // Check if the entity is a falling block and has landed in the End dimension
+    public void onEntitySpawn(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof FallingBlock && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
             // Spawn a new falling block entity with velocity to the north and upward
             World world = entity.getWorld();
             Location location = entity.getLocation();
-            Material material = ((FallingBlock) entity).getBlockData().getMaterial();
-            World worldend = Bukkit.getWorld("world_the_end");
-            Location locationblock = new Location(worldend, 100, 49, 0);
-            Block block = locationblock.getBlock();
-            byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
             Vector velocity = switch (counter % 4) {
                 case 0 -> new Vector(0, 0.5, -1);
                 case 1 -> new Vector(-1, 0.5, 0);
@@ -77,15 +70,13 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 default -> new Vector(1, 0.5, 0);
             };
             counter++;
-
+            Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+            byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
             FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
             newFallingBlock.setVelocity(velocity);
-
-            // Remove the original block
-            block.setType(Material.AIR);
+            entity.remove();
         }
     }
-
 
 
     Block getBlockMovingTo(Location loc, Vector vel){
