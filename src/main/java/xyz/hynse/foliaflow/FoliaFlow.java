@@ -81,8 +81,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             return;
         }
         entity.remove();
-        Location fuck = new Location(Bukkit.getWorld("world_the_end"), 100, 49 ,0);
-        fuck.getBlock().setType(Material.AIR);
+        Location block = new Location(Bukkit.getWorld("world_the_end"), 100, 49 ,0);
+        block.getBlock().setType(Material.AIR);
         World world = entity.getWorld();
         Location location = entity.getLocation();
         byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
