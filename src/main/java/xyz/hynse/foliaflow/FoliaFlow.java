@@ -24,27 +24,28 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
-        getLogger().info(ChatColor.GREEN + "    ______________             \n");
-        getLogger().info(ChatColor.GREEN + "   / ____/ ____/ /___ _      __\n");
-        getLogger().info(ChatColor.GREEN + "  / /_  / /_  / / __ \\ | /| / /\n");
-        getLogger().info(ChatColor.GREEN + " / __/ / __/ / / /_/ / |/ |/ / \n");
-        getLogger().info(ChatColor.GREEN + "/_/   /_/   /_/\\____/|__/|__/  \n");
-        getLogger().info("");
-        getLogger().info(ChatColor.YELLOW + "Plugin started successfully!");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "   / ____/ ____/ /___ _      __");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "  / /_  / /_  / / __ \\ | /| / /");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + " / __/ / __/ / / /_/ / |/ |/ / ");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "/_/   /_/   /_/\\____/|__/|__/  ");
+        getServer().getConsoleSender().sendMessage("");
+        getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Plugin started successfully!");
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
         getServer().getPluginManager().registerEvents(this, this);
-        getLogger().info(ChatColor.RED + "    ______________             \n");
-        getLogger().info(ChatColor.RED + "   / ____/ ____/ /___ _      __\n");
-        getLogger().info(ChatColor.RED + "  / /_  / /_  / / __ \\ | /| / /\n");
-        getLogger().info(ChatColor.RED + " / __/ / __/ / / /_/ / |/ |/ / \n");
-        getLogger().info(ChatColor.RED + "/_/   /_/   /_/\\____/|__/|__/  \n");
-        getLogger().info("");
-        getLogger().info(ChatColor.YELLOW + "Plugin stopped successfully!");
+        getServer().getConsoleSender().sendMessage(ChatColor.RED + "    ______________             ");
+        getServer().getConsoleSender().sendMessage(ChatColor.RED + "   / ____/ ____/ /___ _      __");
+        getServer().getConsoleSender().sendMessage(ChatColor.RED + "  / /_  / /_  / / __ \\ | /| / /");
+        getServer().getConsoleSender().sendMessage(ChatColor.RED + " / __/ / __/ / / /_/ / |/ |/ / ");
+        getServer().getConsoleSender().sendMessage(ChatColor.RED + "/_/   /_/   /_/\\____/|__/|__/  ");
+        getServer().getConsoleSender().sendMessage("");
+        getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Plugin stopped successfully!");
     }
+
 
 
     @EventHandler
