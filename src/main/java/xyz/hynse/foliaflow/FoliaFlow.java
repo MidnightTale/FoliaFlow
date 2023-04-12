@@ -27,7 +27,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void Remove1blockinEnd() {
         World WorldEnd = Bukkit.getServer().getWorld("world_the_end");
         Location LocationEnd = new Location(WorldEnd,100,48,0);
-        WorldEnd.getBlockAt(LocationEnd).setType(Material.AIR);
+        LocationEnd.getBlock().setType(Material.AIR);
     }
 
 
