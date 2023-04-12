@@ -63,6 +63,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 spawnLoc.setZ(spawnLoc.getZ()+0.5);
 
                 FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+                dummy.setDropItem(false);
+                dummy.setHurtEntities(false);
+                dummy.setGravity(true);
                 Vector dummyVel = vel.clone();
                 dummyVel.setY(-dummyVel.getY());
                 dummyVel.multiply(new Vector(2, 2, 2));
@@ -70,10 +73,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, -0.2, 0));
 
                 dummy.setVelocity(dummyVel);
-                dummy.setDropItem(false);
-                dummy.setHurtEntities(false);
-                dummy.setInvulnerable(true);
-                dummy.setVisualFire(true);
             }
         }
     }
