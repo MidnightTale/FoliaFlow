@@ -1,9 +1,6 @@
 package xyz.hynse.foliaflow;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -27,13 +24,26 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getLogger().info("Bbsdfia plugin started");
+        getLogger().info(ChatColor.GREEN + "    ______________             \n");
+        getLogger().info(ChatColor.GREEN + "   / ____/ ____/ /___ _      __\n");
+        getLogger().info(ChatColor.GREEN + "  / /_  / /_  / / __ \\ | /| / /\n");
+        getLogger().info(ChatColor.GREEN + " / __/ / __/ / / /_/ / |/ |/ / \n");
+        getLogger().info(ChatColor.GREEN + "/_/   /_/   /_/\\____/|__/|__/  \n");
+        getLogger().info("");
+        getLogger().info(ChatColor.YELLOW + "Plugin started successfully!");
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        getServer().getLogger().info("Bbsdfia plugin stopped");
+        getServer().getPluginManager().registerEvents(this, this);
+        getLogger().info(ChatColor.RED + "    ______________             \n");
+        getLogger().info(ChatColor.RED + "   / ____/ ____/ /___ _      __\n");
+        getLogger().info(ChatColor.RED + "  / /_  / /_  / / __ \\ | /| / /\n");
+        getLogger().info(ChatColor.RED + " / __/ / __/ / / /_/ / |/ |/ / \n");
+        getLogger().info(ChatColor.RED + "/_/   /_/   /_/\\____/|__/|__/  \n");
+        getLogger().info("");
+        getLogger().info(ChatColor.YELLOW + "Plugin stopped successfully!");
     }
 
 
