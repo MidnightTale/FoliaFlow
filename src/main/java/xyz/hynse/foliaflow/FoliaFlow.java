@@ -24,11 +24,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
 
-    public void Remove1blockinEnd() {
-        World WorldEnd = Bukkit.getServer().getWorld("world_the_end");
-        Location LocationEnd = new Location(WorldEnd,100,48,0);
-        LocationEnd.getBlock().setType(Material.AIR);
-    }
 
 
 
@@ -79,7 +74,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, 1, 0));
 
                 dummy.setVelocity(dummyVel);
-                Remove1blockinEnd();
             }
         }
     }
@@ -88,7 +82,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @EventHandler
     public void onFallingBlockSpawn(EntitySpawnEvent e) {
         if (e.getEntityType() == EntityType.FALLING_BLOCK && e.getEntity().getWorld().getEnvironment() == World.Environment.THE_END) {
-            Remove1blockinEnd();
+            World WorldEnd = Bukkit.getServer().getWorld("world_the_end");
+            Location LocationEnd = new Location(WorldEnd,100,48,0);
+            LocationEnd.getBlock().setType(Material.AIR);
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
 
@@ -99,7 +95,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             counter ++;
             Vector velocity = velocities[index];
             entity.setVelocity(velocity);
-            Remove1blockinEnd();
 
             // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
             getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
