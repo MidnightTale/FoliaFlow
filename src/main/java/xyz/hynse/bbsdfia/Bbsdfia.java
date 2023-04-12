@@ -85,32 +85,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             block.setType(Material.AIR);
         }
     }
-    @EventHandler
-    public void onItemSpawn(ItemSpawnEvent event) {
-        Item item = event.getEntity();
-        Location location = item.getLocation();
-
-        // Check if item is in End dimension at (100, 49, 0)
-        if (location.getWorld().getEnvironment() == World.Environment.THE_END &&
-                location.getBlockX() == 100 && location.getBlockY() == 49 && location.getBlockZ() == 0) {
-
-            // Store material type of detected item
-            detectedMaterial = item.getItemStack().getType();
-            // Create block data for falling block entity
-            byte data = ((FallingBlock) item).getBlockData().getAsString().getBytes()[0];
-            Vector velocity = switch (counter % 4) {
-                case 0 -> new Vector(0, 0.5, -1);
-                case 1 -> new Vector(-1, 0.5, 0);
-                case 2 -> new Vector(0, 0.5, 1);
-                default -> new Vector(1, 0.5, 0);
-            };
-            counter++;
-
-            FallingBlock newFallingBlock = item.getWorld().spawnFallingBlock(location, detectedMaterial, data);
-            newFallingBlock.setVelocity(velocity);
-
-        }
-    }
 
 
 
