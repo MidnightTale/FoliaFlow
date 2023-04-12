@@ -82,38 +82,24 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
 
     @EventHandler
-    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof FallingBlock)) {
-            return;
-        }
-        if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
-            return;
-        }
-        Location blockLoc = event.getBlock().getLocation();
-        if (movingBlocks.contains(blockLoc)) {
-            return;
-        }
-        debug("EntityChangeBlock event received for falling block at location " + entity.getLocation());
-        entity.remove();
-        movingBlocks.add(blockLoc);
-        Location block = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
-        block.getBlock().setType(Material.AIR);
-        World world = entity.getWorld();
-        Location location = entity.getLocation();
-        byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
-        Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+    public void onFallingBlockSpawn(EntitySpawnEvent e) {
+        if (e.getEntityType() == EntityType.FALLING_BLOCK && e.getEntity().getWorld().getEnvironment() == World.Environment.THE_END) {
+            Entity entity = e.getEntity();
+            Location loc = entity.getLocation();
 
-        int index = counter % 4;
-        Vector velocity = velocities[index];
-        counter++;
-        debug("Spawning new falling block of material " + material + " at location " + location + " with velocity " + velocity.toString());
-        FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
-        newFallingBlock.setVelocity(velocity);
+            debug("Falling block spawned at location " + loc);
 
-        // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
-        getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(blockLoc), 20L);
+            // Set the initial velocity of the falling block
+            int index = counter % 4;
+            counter ++;
+            Vector velocity = velocities[index];
+            entity.setVelocity(velocity);
+
+            // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
+            getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
+        }
     }
+
 
 
     Block getBlockMovingTo(Location loc, Vector vel) {
