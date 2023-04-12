@@ -39,10 +39,10 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Material.SAND
     };
 
-    private static final Vector VELOCITY_SOUTH = new Vector(0, 0, -1);
-    private static final Vector VELOCITY_EAST = new Vector(1, 0, 0);
-    private static final Vector VELOCITY_NORTH = new Vector(0, 0, 1);
-    private static final Vector VELOCITY_WEST = new Vector(0, 0, 1);
+    private static final Vector VELOCITY_SOUTH = new Vector(0, 1, -2);
+    private static final Vector VELOCITY_EAST = new Vector(2, 1, 0);
+    private static final Vector VELOCITY_NORTH = new Vector(0, 1, 2);
+    private static final Vector VELOCITY_WEST = new Vector(0, 1, 2);
 
     private static final Location START_LOCATION = new Location(Bukkit.getWorld("world_the_end"), 101, 49, 1);
     private static final Location END_LOCATION = new Location(Bukkit.getWorld("world_the_end"), 99, 51, -1);
