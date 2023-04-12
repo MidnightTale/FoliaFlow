@@ -37,16 +37,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        getServer().getPluginManager().registerEvents(this, this);
-        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
-        getServer().getConsoleSender().sendMessage(ChatColor.RED + "    ______________             ");
-        getServer().getConsoleSender().sendMessage(ChatColor.RED + "   / ____/ ____/ /___ _      __");
-        getServer().getConsoleSender().sendMessage(ChatColor.RED + "  / /_  / /_  / / __ \\ | /| / /");
-        getServer().getConsoleSender().sendMessage(ChatColor.RED + " / __/ / __/ / / /_/ / |/ |/ / ");
-        getServer().getConsoleSender().sendMessage(ChatColor.RED + "/_/   /_/   /_/\\____/|__/|__/  ");
-        getServer().getConsoleSender().sendMessage("");
-        getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Plugin stopped successfully!");
-        getServer().getConsoleSender().sendMessage(ChatColor.GRAY +  "-------------------------------");
         super.onDisable();
     }
 
