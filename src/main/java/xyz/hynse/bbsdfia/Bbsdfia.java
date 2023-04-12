@@ -81,6 +81,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             FoliaLib foliaLib = new FoliaLib(this);
 
             if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
+                foliaLib.getImpl().runAtLocation(loc, () -> {
                 Location spawnLoc = movingTo.getLocation();
                 spawnLoc.setX(spawnLoc.getX()+0.5);
                 spawnLoc.setY(spawnLoc.getY()+0.5);
@@ -93,22 +94,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.multiply(new Vector(2, 2, 2));
                 dummyVel.add(new Vector(0, -0.2, 0));
                 firstBlock.setVelocity(dummyVel);
-
-                foliaLib.getImpl().runAtLocation(spawnLoc, () -> {
-                    for (int i = 0; i < 2; i++) {
-                        Location spawnLoc1 = movingTo.getLocation();
-                        spawnLoc1.setX(spawnLoc1.getX() + 0.5);
-                        spawnLoc1.setY(spawnLoc1.getY() + 0.5);
-                        spawnLoc1.setZ(spawnLoc1.getZ() + 0.5);
-
-                        FallingBlock fallingBlock = (FallingBlock) entity;
-                        FallingBlock dummy = spawnLoc1.getWorld().spawnFallingBlock(spawnLoc1, fallingBlock.getBlockData());
-                        Vector dummyVel1 = vel.clone();
-                        dummyVel1.setY(-dummyVel1.getY());
-                        dummyVel1.multiply(new Vector(2, 2, 2));
-                        dummyVel1.add(new Vector(0, -0.2, 0));
-                        dummy.setVelocity(dummyVel1);
-                    }
                 });
             }
         }
@@ -129,6 +114,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         }
 
         // Spawn a new falling block entity with velocity
+
         entity.remove();
         Location fuck = new Location(Bukkit.getWorld("world_the_end"), 100, 49 ,0);
         fuck.getBlock().setType(Material.AIR);
