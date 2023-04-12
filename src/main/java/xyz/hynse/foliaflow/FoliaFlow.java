@@ -11,6 +11,9 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
     private final Vector velocity2 = new Vector(-1, 0.5, 0);
@@ -18,6 +21,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity4 = new Vector(1, 0.5, 0);
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
+    private final Set<Location> movingBlocks = new HashSet<>();
+
 
 
     @Override
@@ -61,7 +66,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         }
     }
 
-
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
@@ -71,8 +75,13 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
             return;
         }
+        Location blockLoc = event.getBlock().getLocation();
+        if (movingBlocks.contains(blockLoc)) {
+            return;
+        }
         debug("EntityChangeBlock event received for falling block at location " + entity.getLocation());
         entity.remove();
+        movingBlocks.add(blockLoc);
         Location block = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
         block.getBlock().setType(Material.AIR);
         World world = entity.getWorld();
@@ -86,7 +95,11 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         debug("Spawning new falling block of material " + material + " at location " + location + " with velocity " + velocity.toString());
         FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
         newFallingBlock.setVelocity(velocity);
+
+        // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
+        getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(blockLoc), 20L);
     }
+
 
     Block getBlockMovingTo(Location loc, Vector vel) {
         double absMax = 0, max = 0;
