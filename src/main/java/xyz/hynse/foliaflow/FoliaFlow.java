@@ -1,5 +1,6 @@
 package xyz.hynse.foliaflow;
 
+import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -23,13 +24,17 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
-
+    private World endWorld;
+    private Location obsidianLocation;
 
 
 
     @Override
     public void onEnable() {
         super.onEnable();
+        endWorld = getServer().getWorld("world_the_end"); // change "world_the_end" to the name of your end world
+        obsidianLocation = new Location(endWorld, 100, 48, 0); // change the coordinates to the location of your obsidian platform
+
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
@@ -48,6 +53,17 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         debug("Plugin stopped successfully!");
     }
 
+    @EventHandler
+    public void onEntityMove(EntityMoveEvent event) {
+        handleMove(event.getEntity().getLocation());
+    }
+
+    private void handleMove(Location location) {
+        if (location.getWorld() == endWorld && location.distance(obsidianLocation) <= 1.0) { // check if the location is in the end and within 1 block of the obsidian platform
+            Block obsidianBlock = obsidianLocation.getBlock();
+            obsidianBlock.setType(Material.AIR); // set the block to air
+        }
+    }
 
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
@@ -82,9 +98,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @EventHandler
     public void onFallingBlockSpawn(EntitySpawnEvent e) {
         if (e.getEntityType() == EntityType.FALLING_BLOCK && e.getEntity().getWorld().getEnvironment() == World.Environment.THE_END) {
-            World WorldEnd = Bukkit.getServer().getWorld("world_the_end");
-            Location LocationEnd = new Location(WorldEnd,100,48,0);
-            LocationEnd.getBlock().setType(Material.AIR);
             Entity entity = e.getEntity();
             Location loc = entity.getLocation();
 
