@@ -22,8 +22,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     private final Vector[] velocities = { velocity1, velocity2, velocity3, velocity4 };
     private int counter = 0;
 
-    private final Location locationplus = new Location(Bukkit.getWorld("world_the_end"), 100, 49, 0);
-
 
 
     @Override
@@ -31,14 +29,12 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getLogger().info("Bbsdfia plugin started");
-        locationplus.getBlock().setType(Material.AIR);
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
         getServer().getLogger().info("Bbsdfia plugin stopped");
-        locationplus.getBlock().setType(Material.AIR);
     }
 
 
@@ -52,7 +48,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
             Block movingTo = getBlockMovingTo(loc, vel);
 
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                locationplus.getBlock().setType(Material.AIR);
                 Location spawnLoc = movingTo.getLocation();
                 spawnLoc.setX(spawnLoc.getX()+0.5);
                 spawnLoc.setY(spawnLoc.getY()+0.5);
@@ -66,6 +61,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummyVel.add(new Vector(0, -0.2, 0));
 
                 dummy.setVelocity(dummyVel);
+                dummy.remove();
             }
         }
     }
@@ -74,11 +70,9 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof FallingBlock)) {
-            locationplus.getBlock().setType(Material.AIR);
             return;
         }
         if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
-            locationplus.getBlock().setType(Material.AIR);
             return;
         }
 
@@ -88,7 +82,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         Location location = entity.getLocation();
         byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
         Material material = ((FallingBlock) entity).getBlockData().getMaterial();
-        locationplus.getBlock().setType(Material.AIR);
 
         int index = counter % 4;
         Vector velocity = velocities[index];
