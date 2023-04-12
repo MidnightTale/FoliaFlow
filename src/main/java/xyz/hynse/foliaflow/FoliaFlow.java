@@ -1,6 +1,5 @@
-package xyz.hynse.bbsdfia;
+package xyz.hynse.foliaflow;
 
-import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +14,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-public class Bbsdfia extends JavaPlugin implements Listener {
+public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
     private final Vector velocity2 = new Vector(-1, 0.5, 0);
     private final Vector velocity3 = new Vector(0, 0.5, 1);
@@ -23,16 +22,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     private final Vector[] velocities = { velocity1, velocity2, velocity3, velocity4 };
     private int counter = 0;
 
-    FoliaLib foliaLib = new FoliaLib(this);
 
-
-/*
-    @Override
-    public void onEnable() {
-        super.onEnable();
-        getServer().getPluginManager().registerEvents(this, this);
-        getServer().getLogger().info("Bbsdfia plugin started");
-    }*/
     @Override
     public void onEnable() {
         super.onEnable();
@@ -47,7 +37,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
     }
 
 
-    /*@EventHandler
+    @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() == EntityType.FALLING_BLOCK){
             Entity entity = e.getEntity();
@@ -71,35 +61,7 @@ public class Bbsdfia extends JavaPlugin implements Listener {
                 dummy.setVelocity(dummyVel);
             }
         }
-    }*/
-
-    @EventHandler
-    public void onFallingBlockToBlock(EntityChangeBlockEvent e) {
-        if (e.getEntityType() == EntityType.FALLING_BLOCK) {
-            Entity entity = e.getEntity();
-            Location loc = entity.getLocation();
-            Vector vel = entity.getVelocity();
-            Block movingTo = getBlockMovingTo(loc, vel);
-
-            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
-                foliaLib.getImpl().runAtLocation(loc, () -> {
-                Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()+0.5);
-                spawnLoc.setZ(spawnLoc.getZ()+0.5);
-
-                // Spawn the first falling block immediately
-                FallingBlock firstBlock = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
-                Vector dummyVel = vel.clone();
-                dummyVel.setY(-dummyVel.getY());
-                dummyVel.multiply(new Vector(2, 2, 2));
-                dummyVel.add(new Vector(0, -0.2, 0));
-                firstBlock.setVelocity(dummyVel);
-                });
-            }
-        }
     }
-
 
 
 
@@ -113,9 +75,6 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
             return;
         }
-
-        // Spawn a new falling block entity with velocity
-
         entity.remove();
         Location fuck = new Location(Bukkit.getWorld("world_the_end"), 100, 49 ,0);
         fuck.getBlock().setType(Material.AIR);
@@ -127,10 +86,8 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         int index = counter % 4;
         Vector velocity = velocities[index];
         counter++;
-        foliaLib.getImpl().runAtLocation(location, () -> {
         FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
         newFallingBlock.setVelocity(velocity);
-        });
     }
 
 
