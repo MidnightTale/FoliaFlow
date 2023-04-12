@@ -16,7 +16,16 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Bbsdfia extends JavaPlugin implements Listener {
+    private final List<Material> fallingBlockMaterials = Arrays.asList(
+            Material.DRAGON_EGG,
+            Material.GRAVEL,
+            Material.RED_SAND,
+            Material.SAND
+    );
     @Override
     public void onEnable() {
         super.onEnable();
@@ -56,64 +65,22 @@ public class Bbsdfia extends JavaPlugin implements Listener {
         }
     }
     @EventHandler
-    public void onBlockPhysics(BlockPhysicsEvent event) {
-        Block block = event.getBlock();
-        if (isFallingBlock(block.getType())) {
-            // Get the location of the block
-            Location loc = block.getLocation();
+    public void onFallingBlockLand(EntityChangeBlockEvent event) {
+        // Check if the entity is a falling block and has landed in the End dimension
+        Entity entity = event.getEntity();
+        if (entity instanceof FallingBlock && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+            // Spawn a new falling block entity with velocity to the north and upward
+            World world = entity.getWorld();
+            Location location = entity.getLocation();
+            Vector velocity = new Vector(0, 1.2, -6);
+            Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+            byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
+            FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
+            newFallingBlock.setVelocity(velocity);
 
-            // Check if the block is within the desired area
-            if (isWithinArea(loc)) {
-                // Create a new falling block entity at the location of the block
-                FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getBlockData());
-
-                // Set the velocity of the falling block entity
-                fallingBlock.setVelocity(getRandomVelocity());
-
-                // Remove the original block
-                block.setType(Material.AIR);
-            }
+            // Remove the original falling block entity
+            entity.remove();
         }
-    }
-
-    private boolean isFallingBlock(Material material) {
-        return material == Material.BLACK_CONCRETE_POWDER ||
-                material == Material.BLUE_CONCRETE_POWDER ||
-                material == Material.BROWN_CONCRETE_POWDER ||
-                material == Material.CYAN_CONCRETE_POWDER ||
-                material == Material.GRAY_CONCRETE_POWDER ||
-                material == Material.GREEN_CONCRETE_POWDER ||
-                material == Material.LIGHT_BLUE_CONCRETE_POWDER ||
-                material == Material.LIGHT_GRAY_CONCRETE_POWDER ||
-                material == Material.LIME_CONCRETE_POWDER ||
-                material == Material.MAGENTA_CONCRETE_POWDER ||
-                material == Material.ORANGE_CONCRETE_POWDER ||
-                material == Material.PINK_CONCRETE_POWDER ||
-                material == Material.PURPLE_CONCRETE_POWDER ||
-                material == Material.RED_CONCRETE_POWDER ||
-                material == Material.WHITE_CONCRETE_POWDER ||
-                material == Material.YELLOW_CONCRETE_POWDER ||
-                material == Material.DRAGON_EGG ||
-                material == Material.GRAVEL ||
-                material == Material.RED_SAND ||
-                material == Material.SAND;
-    }
-
-    private boolean isWithinArea(Location loc) {
-        return loc.getWorld().getName().equals("world_the_end") &&
-                loc.getBlockX() >= 101 && loc.getBlockX() <= 99 &&
-                loc.getBlockY() >= 49 && loc.getBlockY() <= 51 &&
-                loc.getBlockZ() >= -1 && loc.getBlockZ() <= 1;
-    }
-
-    private Vector getRandomVelocity() {
-        int direction = (int) (Math.random() * 4);
-        return switch (direction) {
-            case 0 -> new Vector(0, 1, -2);
-            case 1 -> new Vector(2, 1, 0);
-            case 2 -> new Vector(0, 1, 2);
-            default -> new Vector(-2, 1, 0);
-        };
     }
 
 
