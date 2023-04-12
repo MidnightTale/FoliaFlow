@@ -3,11 +3,11 @@ package xyz.hynse.foliaflow;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -40,31 +40,38 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
 
     @EventHandler
-    public void onFallingBlockToBlock(EntityChangeBlockEvent e) {
-        if (e.getEntityType() == EntityType.FALLING_BLOCK) {
-            Entity entity = e.getEntity();
-            Location loc = entity.getLocation();
-            Vector vel = entity.getVelocity();
-            Block movingTo = getBlockMovingTo(loc, vel);
+    public void onEntitySpawn(EntitySpawnEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof FallingBlock)) {
+            return;
+        }
+        if (entity.getWorld().getEnvironment() != World.Environment.THE_END) {
+            return;
+        }
+        debug("Falling block spawned in the end at location " + entity.getLocation());
+        Location loc = entity.getLocation();
+        Vector vel = entity.getVelocity();
+        Block movingTo = getBlockMovingTo(loc, vel);
 
-            if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
-                Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX() + 0.5);
-                spawnLoc.setY(spawnLoc.getY() + 0.5);
-                spawnLoc.setZ(spawnLoc.getZ() + 0.5);
+        if (movingTo != null && movingTo.getType() == Material.END_PORTAL) {
+            Location spawnLoc = movingTo.getLocation();
+            spawnLoc.setX(spawnLoc.getX() + 0.5);
+            spawnLoc.setY(spawnLoc.getY() + 0.5);
+            spawnLoc.setZ(spawnLoc.getZ() + 0.5);
 
-                debug("Creating dummy falling block at location " + spawnLoc + " with velocity " + vel);
-                FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
-                Vector dummyVel = vel.clone();
-                dummyVel.setY(-dummyVel.getY());
-                dummyVel.multiply(new Vector(2, 2, 2));
+            debug("Creating dummy falling block at location " + spawnLoc + " with velocity " + vel);
+            FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+            Vector dummyVel = vel.clone();
+            dummyVel.setY(-dummyVel.getY());
+            dummyVel.multiply(new Vector(2, 2, 2));
 
-                dummyVel.add(new Vector(0, -0.2, 0));
+            dummyVel.add(new Vector(0, -0.2, 0));
 
-                dummy.setVelocity(dummyVel);
-            }
+            dummy.setVelocity(dummyVel);
+            entity.remove();
         }
     }
+
 
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
