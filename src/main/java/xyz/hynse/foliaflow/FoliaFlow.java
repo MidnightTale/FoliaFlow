@@ -128,7 +128,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
                 dummy.setVelocity(dummyVel);
             }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException expected) {
                 getServer().getLogger().info("onFallingBlockToBlock erorr (likly chunky it not load)");
             }
         }
