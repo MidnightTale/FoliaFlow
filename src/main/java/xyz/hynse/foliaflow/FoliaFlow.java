@@ -39,6 +39,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
+
         // Get the region scheduler for the server
         try {
         RegionScheduler schedulerblock = getServer().getRegionScheduler();
@@ -56,31 +57,34 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         } catch (NullPointerException block) {
             getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
         }
-        try {
-        AsyncScheduler scheduler = getServer().getAsyncScheduler();
-        task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
-            for (World world : Bukkit.getWorlds()) {
-                for (Entity entity : world.getEntities()) {
-                    if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                        //Location loc = entity.getLocation();
-                        //debug("Falling block spawned at location " + loc);
-
-                        // Set the initial velocity of the falling block only if it doesn't have a velocity stored
-                        if (!velocitiesMap.containsKey(entity)) {
-                            int index = counter % 4;
-                            counter++;
-                            Vector velocity = velocities[index];
-                            entity.setVelocity(velocity);
-                            velocitiesMap.put(entity, velocity); // Store the velocity in the map
-                            movingBlocks.add(entity.getLocation()); // Add the location to the set
+            AsyncScheduler scheduler = getServer().getAsyncScheduler();
+            task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
+                for (World world : Bukkit.getWorlds()) {
+                    for (Entity entity : world.getEntities()) {
+                        if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+                            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
+                            Location loc = entity.getLocation();
+                            if (loc.distance(centerLoc) <= 1) {
+                                // Set the initial velocity of the falling block only if it doesn't have a velocity stored
+                                if (!velocitiesMap.containsKey(entity)) {
+                                    try {
+                                        int index = counter % 4;
+                                        counter++;
+                                        Vector velocity = velocities[index];
+                                        entity.setVelocity(velocity);
+                                        velocitiesMap.put(entity, velocity); // Store the velocity in the map
+                                        movingBlocks.add(entity.getLocation()); // Add the location to the set
+                                    } catch (NullPointerException e) {
+                                        // Handle the exception here, for example:
+                                        e.printStackTrace();
+                                        getServer().getLogger().info("An error occurred: " + e.getMessage());
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }), 0L, 1L, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            getServer().getLogger().info("AsyncScheduler erorr (likly chunky it not load)");
-        }
+            }), 0L, 1L, TimeUnit.MILLISECONDS);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
