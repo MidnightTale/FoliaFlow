@@ -15,21 +15,19 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.bukkit.Bukkit.getScheduler;
 
 public class FoliaFlow extends JavaPlugin implements Listener {
-    private int vh = (int) 0.1;
-    private int vt = (int) 0.3;
+    private final double vh = 0.1;
+    private final double vt = 0.3;
     private final Vector velocity1 = new Vector(0, vh, vt);
     private final Vector velocity2 = new Vector(vt, vh, 0);
-    private final Vector velocity3 = new Vector(0, vh, vt);
-    private final Vector velocity4 = new Vector(vt, vh, 0);
+    private final Vector velocity3 = new Vector(0, vh, -vt);
+    private final Vector velocity4 = new Vector(-vt, vh, 0);
+
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
@@ -46,8 +44,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         RegionScheduler schedulerblock = getServer().getRegionScheduler();
 
         // Schedule a repeating task to run every tick using runAtFixedRate() method
-        blockktask = schedulerblock.runAtFixedRate(this, Bukkit.getWorld("world_the_end"), 1, 1, (schedulerTask) -> {
-            Block block = Bukkit.getWorld("world_the_end").getBlockAt(100, 48, 0);
+        blockktask = schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
+            Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
             if (block.getType() == Material.OBSIDIAN) {
                 block.setType(Material.COBBLED_DEEPSLATE_SLAB);
                 Slab slab = (Slab) block.getBlockData();
@@ -100,7 +98,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         task.isCancelled();
         blockktask.isCancelled();
         super.onDisable();
-        debug("Plugin stopped successfully!");
+        debug();
     }
 
     @EventHandler
@@ -164,7 +162,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         return relative;
     }
 
-    private void debug(String message) {
-        getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "[FoliaFlow] " + message);
+    private void debug() {
+        getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "[FoliaFlow] " + "Plugin stopped successfully!");
     }
 }
