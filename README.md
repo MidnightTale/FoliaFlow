@@ -13,7 +13,7 @@ To install FoliaFlow, follow these steps:
 
 ## Contributing
 
-If you would like to contribute to EndBlockPorter, feel free to submit a pull request with your changes. All contributions are welcome and appreciated.
+If you would like to contribute to FoliaFlow, feel free to submit a pull request with your changes. All contributions are welcome and appreciated.
 
 ## License
 
