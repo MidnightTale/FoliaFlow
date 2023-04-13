@@ -1,6 +1,7 @@
 package xyz.hynse.foliaflow;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -10,14 +11,19 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static org.bukkit.Bukkit.getScheduler;
 
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
@@ -30,26 +36,29 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>(); // Create a map to store velocities
     private ScheduledTask task;
 
+    private ScheduledTask blockktask;
+
     @Override
     public void onEnable() {
         super.onEnable();
+        // Get the region scheduler for the server
+        RegionScheduler schedulerblock = getServer().getRegionScheduler();
+
+        // Schedule a repeating task to run every tick using runAtFixedRate() method
+        blockktask = schedulerblock.runAtFixedRate(this, Bukkit.getWorld("world_the_end"), 1, 1, (schedulerTask) -> {
+            Block block = Bukkit.getWorld("world_the_end").getBlockAt(100, 48, 0);
+            if (block.getType() == Material.OBSIDIAN) {
+                block.setType(Material.AIR);
+            }
+        }, 0L, 1L);
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
-        task = scheduler.runAtFixedRate(this, (scheduledTask) -> Bukkit.getScheduler().runTask(this, () -> {
+        task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
             for (World world : Bukkit.getWorlds()) {
-                // Check if the world is The End
-                if (world.getEnvironment() == World.Environment.THE_END) {
-                    // Get the block at the specified location
-                    Block block = world.getBlockAt(100, 48, 0);
-
-                    // If the block is obsidian, set it to air
-                    if (block.getType() == Material.OBSIDIAN) {
-                        block.setType(Material.AIR);
-                    }
-                }
-
-                // Spawn falling blocks as before
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+                        //Location loc = entity.getLocation();
+                        //debug("Falling block spawned at location " + loc);
+
                         // Set the initial velocity of the falling block only if it doesn't have a velocity stored
                         if (!velocitiesMap.containsKey(entity)) {
                             int index = counter % 4;
