@@ -5,6 +5,7 @@ import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -48,7 +49,10 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         blockktask = schedulerblock.runAtFixedRate(this, Bukkit.getWorld("world_the_end"), 1, 1, (schedulerTask) -> {
             Block block = Bukkit.getWorld("world_the_end").getBlockAt(100, 48, 0);
             if (block.getType() == Material.OBSIDIAN) {
-                block.setType(Material.AIR);
+                block.setType(Material.COBBLED_DEEPSLATE_SLAB);
+                Slab slab = (Slab) block.getBlockData();
+                slab.setType(Slab.Type.BOTTOM);
+                block.setBlockData(slab);
             }
         }, 1L, 1L);
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
