@@ -30,7 +30,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
-        task = scheduler.runAtFixedRate(this, (scheduledTask) -> {
+        task = scheduler.runAtFixedRate(this, (scheduledTask) -> Bukkit.getScheduler().runTask(this, () -> {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
@@ -45,7 +45,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                     }
                 }
             }
-        }, 0L, 1L, TimeUnit.MILLISECONDS);
+        }), 0L, 1L, TimeUnit.MILLISECONDS);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
