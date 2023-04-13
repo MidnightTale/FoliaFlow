@@ -36,11 +36,20 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
         task = scheduler.runAtFixedRate(this, (scheduledTask) -> Bukkit.getScheduler().runTask(this, () -> {
             for (World world : Bukkit.getWorlds()) {
+                // Check if the world is The End
+                if (world.getEnvironment() == World.Environment.THE_END) {
+                    // Get the block at the specified location
+                    Block block = world.getBlockAt(100, 48, 0);
+
+                    // If the block is obsidian, set it to air
+                    if (block.getType() == Material.OBSIDIAN) {
+                        block.setType(Material.AIR);
+                    }
+                }
+
+                // Spawn falling blocks as before
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                        //Location loc = entity.getLocation();
-                        //debug("Falling block spawned at location " + loc);
-
                         // Set the initial velocity of the falling block only if it doesn't have a velocity stored
                         if (!velocitiesMap.containsKey(entity)) {
                             int index = counter % 4;
@@ -147,7 +156,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
             case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
         }
-        debug("Moving falling block from location " + loc.toString() + " to location " + dir);
+        //debug("Moving falling block from location " + loc.toString() + " to location " + dir);
         return relative;
     }
 
