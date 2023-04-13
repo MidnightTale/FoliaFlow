@@ -1,5 +1,7 @@
 package xyz.hynse.foliaflow;
 
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -8,15 +10,10 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.world.ChunkEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity1 = new Vector(0, 0.5, -1);
@@ -26,12 +23,29 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
     //private final Set<Location> movingBlocks = new HashSet<>();
+    private ScheduledTask task;
 
 
     @Override
     public void onEnable() {
         super.onEnable();
-        Bukkit.getScheduler().runTaskTimer(this, this::tick, 0, 1);
+        AsyncScheduler scheduler = this.getServer().getAsyncScheduler();
+        task = scheduler.runAtFixedRate(this, (scheduledTask) -> {
+            for (World world : Bukkit.getWorlds()) {
+                for (Entity entity : world.getEntities()) {
+                    if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+                        Location loc = entity.getLocation();
+                        debug("Falling block spawned at location " + loc);
+
+                        // Set the initial velocity of the falling block
+                        int index = counter % 4;
+                        counter++;
+                        Vector velocity = velocities[index];
+                        entity.setVelocity(velocity);
+                    }
+                }
+            }
+        }, 0L, 1L, TimeUnit.MILLISECONDS);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
@@ -48,6 +62,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onDisable() {
         super.onDisable();
         debug("Plugin stopped successfully!");
+        task.cancel();
     }
 
     /*
@@ -92,23 +107,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
                 dummy.setVelocity(dummyVel);
             }
-        }
-    }
-
-
-    private void tick() {
-        for (Entity entity : Bukkit.getWorlds().stream().flatMap(world -> world.getEntities().stream())
-                .filter(entity -> entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END)
-                .collect(Collectors.toList())) {
-            Location loc = entity.getLocation();
-
-            debug("Falling block spawned at location " + loc);
-
-            // Set the initial velocity of the falling block
-            int index = counter % 4;
-            counter ++;
-            Vector velocity = velocities[index];
-            entity.setVelocity(velocity);
         }
     }
 
