@@ -62,23 +62,23 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                        //Location loc = entity.getLocation();
-                        //debug("Falling block spawned at location " + loc);
-
-                        // Set the initial velocity of the falling block only if it doesn't have a velocity stored
-                        if (!velocitiesMap.containsKey(entity)) {
-                            int index = counter % 4;
-                            counter++;
-                            Vector velocity = velocities[index];
-                            entity.setVelocity(velocity);
-                            velocitiesMap.put(entity, velocity); // Store the velocity in the map
-                            movingBlocks.add(entity.getLocation()); // Add the location to the set
+                        Location loc = entity.getLocation();
+                        if (loc.getBlockX() == 100 && loc.getBlockY() == 49 && loc.getBlockZ() == 0) {
+                            // Set the initial velocity of the falling block only if it doesn't have a velocity stored
+                            if (!velocitiesMap.containsKey(entity)) {
+                                int index = counter % 4;
+                                counter++;
+                                Vector velocity = velocities[index];
+                                entity.setVelocity(velocity);
+                                velocitiesMap.put(entity, velocity); // Store the velocity in the map
+                                movingBlocks.add(entity.getLocation()); // Add the location to the set
+                            }
                         }
                     }
                 }
             }
         }), 0L, 1L, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException entity) {
             getServer().getLogger().info("AsyncScheduler erorr (likly chunky it not load)");
         }
         getServer().getPluginManager().registerEvents(this, this);
