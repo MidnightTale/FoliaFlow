@@ -37,16 +37,19 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                        Location loc = entity.getLocation();
+                        FallingBlock fallingBlock = (FallingBlock) entity;
+                        Location loc = fallingBlock.getLocation();
                         debug("Falling block spawned at location " + loc);
 
                         // Set the initial velocity of the falling block
                         int index = counter % 4;
                         counter++;
                         Vector velocity = velocities[index];
-                        entity.setVelocity(velocity);
-                        // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
-                        getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
+                        fallingBlock.setVelocity(velocity);
+
+                        // Add the location to the set of moving blocks
+                        movingBlocks.add(loc);
+
                     }
                 }
             }
