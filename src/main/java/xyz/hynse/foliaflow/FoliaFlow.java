@@ -50,7 +50,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             if (block.getType() == Material.OBSIDIAN) {
                 block.setType(Material.AIR);
             }
-        }, 0L, 1L);
+        }, 1L, 1L);
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
         task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
             for (World world : Bukkit.getWorlds()) {
