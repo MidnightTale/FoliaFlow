@@ -29,7 +29,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
-        AsyncScheduler scheduler = this.getServer().getAsyncScheduler();
+        AsyncScheduler scheduler = getServer().getAsyncScheduler();
         task = scheduler.runAtFixedRate(this, (scheduledTask) -> {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
