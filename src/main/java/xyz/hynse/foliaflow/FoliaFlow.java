@@ -12,17 +12,14 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import static org.bukkit.Bukkit.getScheduler;
 
@@ -103,23 +100,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         super.onDisable();
         debug("Plugin stopped successfully!");
     }
-
-
-    /*
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
-        Block obsidianBlock = obsidianLocation.getBlock();
-        if (event.getWorld() == endWorld && obsidianBlock.getType() == Material.OBSIDIAN) { // check if the chunk is in the end and the block is obsidian
-            obsidianBlock.setType(Material.AIR); // set the block to air
-        }
-    }
-
-    @EventHandler
-    public void onBlockChange(org.bukkit.event.block.BlockFromToEvent event) {
-        if (event.getBlock().getLocation().equals(obsidianLocation)) { // check if the block change event is for the obsidian block location
-            event.setCancelled(true); // cancel the event to prevent the obsidian block from changing
-        }
-    }*/
 
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
