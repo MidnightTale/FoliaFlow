@@ -38,8 +38,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                        Location loc = entity.getLocation();
-                        debug("Falling block spawned at location " + loc);
+                        //Location loc = entity.getLocation();
+                        //debug("Falling block spawned at location " + loc);
 
                         // Set the initial velocity of the falling block only if it doesn't have a velocity stored
                         if (!velocitiesMap.containsKey(entity)) {
