@@ -86,9 +86,10 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        task.isCancelled();
+        blockktask.isCancelled();
         super.onDisable();
         debug("Plugin stopped successfully!");
-        task.cancel();
     }
 
 
