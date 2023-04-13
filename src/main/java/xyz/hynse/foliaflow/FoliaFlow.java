@@ -13,6 +13,8 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class FoliaFlow extends JavaPlugin implements Listener {
@@ -22,8 +24,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector velocity4 = new Vector(1, 0.5, 0);
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
-    //private final Set<Location> movingBlocks = new HashSet<>();
+    private final Set<Location> movingBlocks = new HashSet<>();
     private ScheduledTask task;
+
 
 
     @Override
@@ -42,6 +45,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                         counter++;
                         Vector velocity = velocities[index];
                         entity.setVelocity(velocity);
+                        // Remove the block from the movingBlocks set after a delay, to prevent it from being immediately moved again
+                        getServer().getScheduler().runTaskLater(this, () -> movingBlocks.remove(loc.getBlock().getLocation()), 20L);
                     }
                 }
             }
