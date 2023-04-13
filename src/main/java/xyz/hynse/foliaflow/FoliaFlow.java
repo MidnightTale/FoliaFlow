@@ -24,10 +24,12 @@ import java.util.concurrent.TimeUnit;
 import static org.bukkit.Bukkit.getScheduler;
 
 public class FoliaFlow extends JavaPlugin implements Listener {
-    private final Vector velocity1 = new Vector(0, 0.5, -1);
-    private final Vector velocity2 = new Vector(-1, 0.5, 0);
-    private final Vector velocity3 = new Vector(0, 0.5, 1);
-    private final Vector velocity4 = new Vector(1, 0.5, 0);
+    private int vh = (int) 0.1;
+    private int vt = (int) 0.3;
+    private final Vector velocity1 = new Vector(0, vh, vt);
+    private final Vector velocity2 = new Vector(vt, vh, 0);
+    private final Vector velocity3 = new Vector(0, vh, vt);
+    private final Vector velocity4 = new Vector(vt, vh, 0);
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
