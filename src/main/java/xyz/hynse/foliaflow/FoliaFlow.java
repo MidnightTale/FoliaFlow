@@ -108,6 +108,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
+            try {
 
             if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
                 Location spawnLoc = movingTo.getLocation();
@@ -127,13 +128,11 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
                 dummy.setVelocity(dummyVel);
             }
+            } catch (NullPointerException e) {
+                getServer().getLogger().info("onFallingBlockToBlock erorr (likly chunky it not load)");
+            }
         }
     }
-
-
-
-
-
 
     Block getBlockMovingTo(Location loc, Vector vel) {
         double absMax = 0, max = 0;
