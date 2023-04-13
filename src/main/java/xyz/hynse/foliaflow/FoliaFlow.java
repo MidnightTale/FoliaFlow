@@ -39,6 +39,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
+
         // Get the region scheduler for the server
         try {
         RegionScheduler schedulerblock = getServer().getRegionScheduler();
@@ -61,8 +62,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 for (World world : Bukkit.getWorlds()) {
                     for (Entity entity : world.getEntities()) {
                         if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+                            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
                             Location loc = entity.getLocation();
-                            if (loc.getBlockX() == 100 && loc.getBlockY() == 48.5 && loc.getBlockZ() == 0) {
+                            if (loc.distance(centerLoc) <= 1) {
                                 // Set the initial velocity of the falling block only if it doesn't have a velocity stored
                                 if (!velocitiesMap.containsKey(entity)) {
                                     try {
