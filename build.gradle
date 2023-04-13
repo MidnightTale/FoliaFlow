@@ -2,9 +2,10 @@ plugins {
     id 'java'
 }
 
-
+def loader = 'folia'
+def server = '1.19.4'
 group = 'xyz.hynse'
-version = '1.2'
+version = "1.2-${server}-${loader}"
 
 repositories {
     mavenCentral()
