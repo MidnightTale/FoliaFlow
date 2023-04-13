@@ -63,7 +63,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
                         Location loc = entity.getLocation();
-                        if (loc.getBlockX() == 100 && loc.getBlockY() == 49 && loc.getBlockZ() == 0) {
+                        if (loc.getBlockX() == 100 && loc.getBlockY() == 48.5 && loc.getBlockZ() == 0) {
                             // Set the initial velocity of the falling block only if it doesn't have a velocity stored
                             if (!velocitiesMap.containsKey(entity)) {
                                 int index = counter % 4;
