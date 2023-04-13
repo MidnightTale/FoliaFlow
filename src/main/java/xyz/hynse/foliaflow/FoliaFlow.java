@@ -22,7 +22,7 @@ import static org.bukkit.Bukkit.getScheduler;
 
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final double vh = 0.3;
-    private final double vt = 0.8;
+    private final double vt = 0.6;
     private final Vector velocity1 = new Vector(0, vh, vt);
     private final Vector velocity2 = new Vector(vt, vh, 0);
     private final Vector velocity3 = new Vector(0, vh, -vt);
