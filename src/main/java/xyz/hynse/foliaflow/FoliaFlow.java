@@ -53,7 +53,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 block.setBlockData(slab);
             }
         }, 1L, 1L);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException RegionScheduler) {
             getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
         }
         try {
@@ -78,7 +78,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 }
             }
         }), 0L, 1L, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException AsyncScheduler) {
             getServer().getLogger().info("AsyncScheduler erorr (likly chunky it not load)");
         }
         getServer().getPluginManager().registerEvents(this, this);
@@ -128,7 +128,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
                 dummy.setVelocity(dummyVel);
             }
-            } catch (NullPointerException expected) {
+            } catch (NullPointerException onFallingBlockToBlock) {
                 getServer().getLogger().info("onFallingBlockToBlock erorr (likly chunky it not load)");
             }
         }
