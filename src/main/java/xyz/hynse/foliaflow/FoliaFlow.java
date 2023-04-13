@@ -13,7 +13,9 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +27,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
+    private final Map<Entity, Vector> velocitiesMap = new HashMap<>(); // Create a map to store velocities
     private ScheduledTask task;
-
-
 
     @Override
     public void onEnable() {
@@ -37,19 +38,18 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                        FallingBlock fallingBlock = (FallingBlock) entity;
-                        Location loc = fallingBlock.getLocation();
+                        Location loc = entity.getLocation();
                         debug("Falling block spawned at location " + loc);
 
-                        // Set the initial velocity of the falling block
-                        int index = counter % 4;
-                        counter++;
-                        Vector velocity = velocities[index];
-                        fallingBlock.setVelocity(velocity);
-
-                        // Add the location to the set of moving blocks
-                        movingBlocks.add(loc);
-
+                        // Set the initial velocity of the falling block only if it doesn't have a velocity stored
+                        if (!velocitiesMap.containsKey(entity)) {
+                            int index = counter % 4;
+                            counter++;
+                            Vector velocity = velocities[index];
+                            entity.setVelocity(velocity);
+                            velocitiesMap.put(entity, velocity); // Store the velocity in the map
+                            movingBlocks.add(entity.getLocation()); // Add the location to the set
+                        }
                     }
                 }
             }
@@ -72,6 +72,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         debug("Plugin stopped successfully!");
         task.cancel();
     }
+
 
     /*
     @EventHandler
