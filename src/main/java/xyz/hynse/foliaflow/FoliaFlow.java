@@ -43,6 +43,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         // Get the region scheduler for the server
+        try {
         RegionScheduler schedulerblock = getServer().getRegionScheduler();
 
         // Schedule a repeating task to run every tick using runAtFixedRate() method
@@ -55,6 +56,10 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 block.setBlockData(slab);
             }
         }, 1L, 1L);
+        } catch (NullPointerException e) {
+            getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
+        }
+        try {
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
         task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
             for (World world : Bukkit.getWorlds()) {
@@ -76,6 +81,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 }
             }
         }), 0L, 1L, TimeUnit.MILLISECONDS);
+        } catch (NullPointerException e) {
+            getServer().getLogger().info("AsyncScheduler erorr (likly chunky it not load)");
+        }
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
