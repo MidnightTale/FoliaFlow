@@ -2,6 +2,7 @@
 ![sss1](https://user-images.githubusercontent.com/125941391/231678608-9762d384-dc3a-440c-a4eb-3340cb39a3e3.png)
 
 FoliaFlow is a Minecraft plugin that allows players to using gravity block duplication glitch again in folia (paper soon)
+[![](https://raw.githubusercontent.com/modrinth/art/main/Branding/Badge/badge-dark__184x72.png)](https://modrinth.com/plugin/foliaflow)
 
 ## Installation
 
