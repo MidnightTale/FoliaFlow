@@ -102,7 +102,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         task.cancel();
         blockktask.cancel();
         super.onDisable();
-        debug();
     }
 
     @EventHandler
@@ -163,9 +162,5 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         }
         //debug("Moving falling block from location " + loc.toString() + " to location " + dir);
         return relative;
-    }
-
-    private void debug() {
-        getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "[FoliaFlow] " + "Plugin stopped successfully!");
     }
 }
