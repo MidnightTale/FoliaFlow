@@ -11,6 +11,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -99,7 +100,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 //        }
 //    }
     @EventHandler
-    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+    public void onEntitySpawn(EntitySpawnEvent event) {
         if (event.getEntity() instanceof FallingBlock) {
             FallingBlock block = (FallingBlock) event.getEntity();
             if (block.getWorld().getEnvironment() == World.Environment.THE_END) {
@@ -109,6 +110,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             }
         }
     }
+
 
 
 
