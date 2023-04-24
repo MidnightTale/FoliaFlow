@@ -84,9 +84,12 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         Location loc = new Location(Bukkit.getWorld("world_the_end"), 100, 48, 0);
         BlockData blockData = Material.OBSIDIAN.createBlockData();
         display = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).spawn(loc, BlockDisplay.class);
+        if (display == null) {
+            getLogger().severe("Failed to spawn BlockDisplay entity.");
+            return;
+        }
         display.setBlock(blockData);
-
-
+        getLogger().info("BlockDisplay entity spawned successfully.");
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -99,6 +102,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         for (Entity entity : Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getEntitiesByClass(BlockDisplay.class)) {
             entity.remove();
         }
+        getLogger().info("BlockDisplay entity removed successfully.");
         task.cancel();
         blockktask.cancel();
         super.onDisable();
