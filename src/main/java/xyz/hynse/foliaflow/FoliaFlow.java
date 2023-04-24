@@ -73,17 +73,25 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     public void onFallingBlockToBlockTheEnd(EntityChangeBlockEvent e) {
         Entity entity = e.getEntity();
         if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+            getLogger().info("found falling block main" + entity);
             Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
             Location loc = entity.getLocation();
             if (loc.distance(centerLoc) <= 2) {
                 // Set the initial velocity of the falling block only if it doesn't have a velocity stored
                 if (!velocitiesMap.containsKey(entity)) {
+                    getLogger().info("add velocity falling block" + entity);
                     int index = counter % 4;
+                    getLogger().info("[1]" + entity);
                     counter++;
+                    getLogger().info("[2]" + entity);
                     Vector velocity = velocities[index];
+                    getLogger().info("[3]" + entity);
                     entity.setVelocity(velocity);
+                    getLogger().info("[4]" + entity);
                     velocitiesMap.put(entity, velocity); // Store the velocity in the map
+                    getLogger().info("[5]" + entity);
                     movingBlocks.add(entity.getLocation()); // Add the location to the set
+                    getLogger().info("[6]" + entity);
                 }
             }
         }
