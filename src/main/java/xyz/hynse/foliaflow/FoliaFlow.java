@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -100,16 +101,18 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 //        }
 //    }
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent event) {
-        if (event.getEntity() instanceof FallingBlock) {
-            FallingBlock block = (FallingBlock) event.getEntity();
-            if (block.getWorld().getEnvironment() == World.Environment.THE_END) {
-                // The falling block is in the End world
+    public void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        if (block.getWorld().getEnvironment() == World.Environment.THE_END) {
+            // The block is in the End world
+            if (block.getBlockData() instanceof FallingBlock) {
+                // The block that was broken is a falling block
                 String message = "I found a falling block in the End!";
                 Bukkit.broadcastMessage(message);
             }
         }
     }
+
 
 
 
