@@ -12,6 +12,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -55,34 +56,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         } catch (NullPointerException block) {
             getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
         }
-            AsyncScheduler scheduler = getServer().getAsyncScheduler();
-            task = scheduler.runAtFixedRate(this, (scheduledTask) -> Bukkit.getScheduler().runTask(this, () -> {
-                for (World world : Bukkit.getWorlds()) {
-                    for (Entity entity : world.getEntities()) {
-                        if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
-                            Location loc = entity.getLocation();
-                            if (loc.distance(centerLoc) <= 1) {
-                                // Set the initial velocity of the falling block only if it doesn't have a velocity stored
-                                if (!velocitiesMap.containsKey(entity)) {
-                                    try {
-                                        int index = counter % 4;
-                                        counter++;
-                                        Vector velocity = velocities[index];
-                                        entity.setVelocity(velocity);
-                                        velocitiesMap.put(entity, velocity); // Store the velocity in the map
-                                        movingBlocks.add(entity.getLocation()); // Add the location to the set
-                                    } catch (NullPointerException e) {
-                                        // Handle the exception here, for example:
-                                        e.printStackTrace();
-                                        getServer().getLogger().info("An error occurred: " + e.getMessage());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }), 0L, 1L, TimeUnit.MILLISECONDS);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getConsoleSender().sendMessage("");
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
@@ -102,6 +75,36 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         super.onDisable();
     }
 
+    @EventHandler
+    public void onEntitySpawn(EntitySpawnEvent e) {
+        if (e.getEntityType() == EntityType.FALLING_BLOCK && e.getLocation().getWorld().getEnvironment() == World.Environment.THE_END) {
+            for (World world : Bukkit.getWorlds()) {
+                for (Entity entity : world.getEntities()) {
+                    if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+                        Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
+                        Location loc = entity.getLocation();
+                        if (loc.distance(centerLoc) <= 1) {
+                            // Set the initial velocity of the falling block only if it doesn't have a velocity stored
+                            if (!velocitiesMap.containsKey(entity)) {
+                                try {
+                                    int index = counter % 4;
+                                    counter++;
+                                    Vector velocity = velocities[index];
+                                    entity.setVelocity(velocity);
+                                    velocitiesMap.put(entity, velocity); // Store the velocity in the map
+                                    movingBlocks.add(entity.getLocation()); // Add the location to the set
+                                } catch (NullPointerException x) {
+                                    // Handle the exception here, for example:
+                                    x.printStackTrace();
+                                    getServer().getLogger().info("An error occurred: " + x.getMessage());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() == EntityType.FALLING_BLOCK){
@@ -158,7 +161,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
             case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
         }
-        //debug("Moving falling block from location " + loc.toString() + " to location " + dir);
         return relative;
     }
 }
