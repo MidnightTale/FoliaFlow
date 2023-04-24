@@ -98,7 +98,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 //            }
 //        }
 //    }
-
+    @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         if (event.getEntity() instanceof FallingBlock) {
             FallingBlock block = (FallingBlock) event.getEntity();
