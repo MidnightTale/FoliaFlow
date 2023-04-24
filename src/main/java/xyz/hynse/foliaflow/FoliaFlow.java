@@ -1,6 +1,5 @@
 package xyz.hynse.foliaflow;
 
-import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
@@ -12,12 +11,10 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final double vh = 0.2;
@@ -31,8 +28,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>(); // Create a map to store velocities
-    private ScheduledTask task;
-
     private ScheduledTask blockktask;
 
     @Override
@@ -70,41 +65,31 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        task.cancel();
         blockktask.cancel();
         super.onDisable();
     }
 
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent e) {
-        if (e.getEntityType() == EntityType.FALLING_BLOCK && e.getLocation().getWorld().getEnvironment() == World.Environment.THE_END) {
-            for (World world : Bukkit.getWorlds()) {
-                for (Entity entity : world.getEntities()) {
-                    if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                        Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
-                        Location loc = entity.getLocation();
-                        if (loc.distance(centerLoc) <= 1) {
-                            // Set the initial velocity of the falling block only if it doesn't have a velocity stored
-                            if (!velocitiesMap.containsKey(entity)) {
-                                try {
-                                    int index = counter % 4;
-                                    counter++;
-                                    Vector velocity = velocities[index];
-                                    entity.setVelocity(velocity);
-                                    velocitiesMap.put(entity, velocity); // Store the velocity in the map
-                                    movingBlocks.add(entity.getLocation()); // Add the location to the set
-                                } catch (NullPointerException x) {
-                                    // Handle the exception here, for example:
-                                    x.printStackTrace();
-                                    getServer().getLogger().info("An error occurred: " + x.getMessage());
-                                }
-                            }
-                        }
-                    }
+    public void onFallingBlockToBlockTheEnd(EntityChangeBlockEvent e) {
+        Entity entity = e.getEntity();
+        if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
+            Location loc = entity.getLocation();
+            if (loc.distance(centerLoc) <= 1) {
+                // Set the initial velocity of the falling block only if it doesn't have a velocity stored
+                if (!velocitiesMap.containsKey(entity)) {
+                    int index = counter % 4;
+                    counter++;
+                    Vector velocity = velocities[index];
+                    entity.setVelocity(velocity);
+                    velocitiesMap.put(entity, velocity); // Store the velocity in the map
+                    movingBlocks.add(entity.getLocation()); // Add the location to the set
                 }
             }
         }
     }
+
+
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() == EntityType.FALLING_BLOCK){
