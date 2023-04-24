@@ -81,7 +81,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
         scheduler.runDelayed(this, task -> {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
-        }, 10, TimeUnit.SECONDS);
+        }, 30, TimeUnit.SECONDS);
 
         // Register the event listener
         getServer().getPluginManager().registerEvents(this, this);
