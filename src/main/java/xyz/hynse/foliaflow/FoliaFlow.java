@@ -7,6 +7,7 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.command.CommandException;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -79,16 +80,30 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             }), 0L, 1L, TimeUnit.MILLISECONDS);
         } catch (UnsupportedOperationException ignored) {
         }
-        getServer().dispatchCommand(Bukkit.getConsoleSender(), "summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
-        getServer().getLogger().info("Removed Fake Block Display");
+        GlobalRegionScheduler scheduler = getServer().getGlobalRegionScheduler();
+        scheduler.execute(this, () -> {
+            try {
+                getServer().dispatchCommand(Bukkit.getConsoleSender(), "summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
+                getServer().getLogger().info("Installed fake block display");
+            } catch (CommandException e) {
+                getLogger().warning("Error while installing Fake Block Display: " + e.getMessage());
+            }
+        });
 
         getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
-        getServer().dispatchCommand(getServer().getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
-        getServer().getLogger().info("Removed Fake Block Display");
+        GlobalRegionScheduler scheduler = getServer().getGlobalRegionScheduler();
+        scheduler.execute(this, () -> {
+            try {
+                getServer().dispatchCommand(getServer().getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
+                getLogger().info("Removed Fake Block Display");
+            } catch (CommandException e) {
+                getLogger().warning("Error while removing Fake Block Display: " + e.getMessage());
+            }
+        });
         task.cancel();
         blockktask.cancel();
         super.onDisable();
