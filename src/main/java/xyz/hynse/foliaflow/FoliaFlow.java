@@ -11,6 +11,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -29,6 +30,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Set<Location> movingBlocks = new HashSet<>();
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>(); // Create a map to store velocities
     private ScheduledTask blockktask;
+    private World endWorld;
 
 
     @Override
@@ -98,24 +100,22 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 //    }
 
     @EventHandler
-    public void onFallingBlockLand(EntityChangeBlockEvent event) {
-        // Check if the entity is a falling block and has landed in the End dimension
-        Entity entity = event.getEntity();
-        if (entity instanceof FallingBlock && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-            // Spawn a new falling block entity with velocity to the north and upward
-            World world = entity.getWorld();
-            Location location = entity.getLocation();
-            Vector velocity = new Vector(0, 1.2, -6);
-            Material material = ((FallingBlock) entity).getBlockData().getMaterial();
-            byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
-            FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
-            newFallingBlock.setVelocity(velocity);
-
-            // Remove the original falling block entity
-            entity.remove();
+    public void onWorldLoad(WorldLoadEvent event) {
+        // Save reference to the End world
+        if (event.getWorld().getName().equals("world_the_end")) {
+            endWorld = event.getWorld();
         }
     }
 
+    @EventHandler
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        Entity entity = event.getEntity();
+
+        // Check if entity is a falling block in the End world
+        if (entity instanceof FallingBlock && entity.getWorld().equals(endWorld)) {
+            getServer().broadcastMessage(ChatColor.RED + "I found a falling block in the End!");
+        }
+    }
 
 
 
