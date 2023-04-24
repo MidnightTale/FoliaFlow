@@ -36,7 +36,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
     private ScheduledTask task;
     private ScheduledTask blockktask;
-    private boolean blockCreated = false;
+    private BlockDisplay display;
     @Override
     public void onEnable() {
         super.onEnable();
@@ -81,22 +81,24 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         } catch (UnsupportedOperationException ignored) {
         }
 
-        Location location = new Location(Bukkit.getWorld("world_the_end"), 100, 48, 0);
-        if (!blockCreated) {
-            World world = location.getWorld();
-            if (world != null) {
-                Block block = world.getBlockAt(location);
-                BlockData blockData = block.getBlockData();
-                BlockDisplay blockDisplay = (BlockDisplay) world.spawnEntity(location, EntityType.BLOCK_DISPLAY);
-                blockDisplay.setBlock(blockData);
-                blockCreated = true;
-            }
-        }
+        Location loc = new Location(Bukkit.getWorld("world_the_end"), 100, 48, 0);
+        BlockData blockData = Material.OBSIDIAN.createBlockData();
+        display = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).spawn(loc, BlockDisplay.class);
+        display.setBlock(blockData);
+
+
         getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
+        if (display != null) {
+            display.remove();
+            display = null;
+        }
+        for (Entity entity : Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getEntitiesByClass(BlockDisplay.class)) {
+            entity.remove();
+        }
         task.cancel();
         blockktask.cancel();
         super.onDisable();
