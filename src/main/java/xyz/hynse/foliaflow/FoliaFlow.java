@@ -34,6 +34,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
     private ScheduledTask task;
     private ScheduledTask blockktask;
+
     @Override
     public void onEnable() {
         super.onEnable();
@@ -78,9 +79,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         } catch (UnsupportedOperationException ignored) {
         }
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
-
         scheduler.runDelayed(this, task -> {
             getServer().dispatchCommand(getServer().getConsoleSender(), "execute in minecraft:the_end run summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
+            getServer().getLogger().info("Installed Fake Block Display");
         }, 30, TimeUnit.SECONDS);
 
         // Register the event listener
@@ -90,6 +91,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         getServer().dispatchCommand(getServer().getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
+        getServer().getLogger().info("Removed Fake Block Display");
         task.cancel();
         blockktask.cancel();
         super.onDisable();
