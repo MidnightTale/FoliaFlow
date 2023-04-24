@@ -99,23 +99,17 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 //        }
 //    }
 
-    @EventHandler
-    public void onWorldLoad(WorldLoadEvent event) {
-        // Save reference to the End world
-        if (event.getWorld().getName().equals("world_the_end")) {
-            endWorld = event.getWorld();
-        }
-    }
-
-    @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-        Entity entity = event.getEntity();
-
-        // Check if entity is a falling block in the End world
-        if (entity instanceof FallingBlock && entity.getWorld().equals(endWorld)) {
-            getServer().broadcastMessage(ChatColor.RED + "I found a falling block in the End!");
+        if (event.getEntity() instanceof FallingBlock) {
+            FallingBlock block = (FallingBlock) event.getEntity();
+            if (block.getWorld().getEnvironment() == World.Environment.THE_END) {
+                // The falling block is in the End world
+                String message = "I found a falling block in the End!";
+                Bukkit.broadcastMessage(message);
+            }
         }
     }
+
 
 
 
