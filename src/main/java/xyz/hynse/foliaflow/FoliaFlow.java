@@ -34,24 +34,21 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
-        Location centerLocation = new Location(Bukkit.getWorld("world_the_end"), 100, 48.5, 0);
-        double radius = 1.0;
-        checkFallingBlock(centerLocation, radius);
 
         // Get the region scheduler for the server
         try {
-        RegionScheduler schedulerblock = getServer().getRegionScheduler();
+            RegionScheduler schedulerblock = getServer().getRegionScheduler();
 
-        // Schedule a repeating task to run every tick using runAtFixedRate() method
-        blockktask = schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
-            Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
-            if (block.getType() == Material.OBSIDIAN) {
-                block.setType(Material.COBBLED_DEEPSLATE_SLAB);
-                Slab slab = (Slab) block.getBlockData();
-                slab.setType(Slab.Type.BOTTOM);
-                block.setBlockData(slab);
-            }
-        }, 1L, 1L);
+            // Schedule a repeating task to run every tick using runAtFixedRate() method
+            blockktask = schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
+                Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
+                if (block.getType() == Material.OBSIDIAN) {
+                    block.setType(Material.COBBLED_DEEPSLATE_SLAB);
+                    Slab slab = (Slab) block.getBlockData();
+                    slab.setType(Slab.Type.BOTTOM);
+                    block.setBlockData(slab);
+                }
+            }, 1L, 1L);
         } catch (NullPointerException block) {
             getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
         }
@@ -73,32 +70,52 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         super.onDisable();
     }
 
-    public void checkFallingBlock(Location centerLocation, double radius) {
-        World world = centerLocation.getWorld();
-        double x = centerLocation.getX();
-        double y = centerLocation.getY();
-        double z = centerLocation.getZ();
+//    @EventHandler
+//    public void onFallingBlockLand(EntityChangeBlockEvent event) {
+//        Entity entity = event.getEntity();
+//        if (entity instanceof FallingBlock && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+//            getLogger().info("found falling block" + entity);
+//            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
+//            Location loc = entity.getLocation();
+//            if (loc.distance(centerLoc) <= 1) {
+//                if (!velocitiesMap.containsKey(entity)) {
+//                    getLogger().info("add velocity falling block" + entity);
+//                    int index = counter % 4;
+//                    getLogger().info("[1]" + entity);
+//                    counter++;
+//                    getLogger().info("[2]" + entity);
+//                    Vector velocity = velocities[index];
+//                    getLogger().info("[3]" + entity);
+//                    entity.setVelocity(velocity);
+//                    getLogger().info("[4]" + entity);
+//                    velocitiesMap.put(entity, velocity); // Store the velocity in the map
+//                    getLogger().info("[5]" + entity);
+//                    movingBlocks.add(entity.getLocation()); // Add the location to the set
+//                    getLogger().info("[6]" + entity);
+//                }
+//            }
+//        }
+//    }
 
-        for (Entity entity : world.getNearbyEntities(centerLocation, radius, radius, radius)) {
-            if (entity instanceof FallingBlock && entity.getLocation().getBlockY() == y && entity.getLocation().getBlockX() == x && entity.getLocation().getBlockZ() == z) {
-                if (!velocitiesMap.containsKey(entity)) {
-                    getLogger().info("add velocity falling block" + entity);
-                    int index = counter % 4;
-                    getLogger().info("[1]" + entity);
-                    counter++;
-                    getLogger().info("[2]" + entity);
-                    Vector velocity = velocities[index];
-                    getLogger().info("[3]" + entity);
-                    entity.setVelocity(velocity);
-                    getLogger().info("[4]" + entity);
-                    velocitiesMap.put(entity, velocity); // Store the velocity in the map
-                    getLogger().info("[5]" + entity);
-                    movingBlocks.add(entity.getLocation()); // Add the location to the set
-                    getLogger().info("[6]" + entity);
-                }
-            }
+    @EventHandler
+    public void onFallingBlockLand(EntityChangeBlockEvent event) {
+        // Check if the entity is a falling block and has landed in the End dimension
+        Entity entity = event.getEntity();
+        if (entity instanceof FallingBlock && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+            // Spawn a new falling block entity with velocity to the north and upward
+            World world = entity.getWorld();
+            Location location = entity.getLocation();
+            Vector velocity = new Vector(0, 1.2, -6);
+            Material material = ((FallingBlock) entity).getBlockData().getMaterial();
+            byte data = ((FallingBlock) entity).getBlockData().getAsString().getBytes()[0];
+            FallingBlock newFallingBlock = world.spawnFallingBlock(location, material, data);
+            newFallingBlock.setVelocity(velocity);
+
+            // Remove the original falling block entity
+            entity.remove();
         }
     }
+
 
 
 
