@@ -18,8 +18,6 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static org.bukkit.Bukkit.getScheduler;
-
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final double vh = 0.2;
     private final double vt = 0.8;
@@ -58,7 +56,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
         }
             AsyncScheduler scheduler = getServer().getAsyncScheduler();
-            task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
+            task = scheduler.runAtFixedRate(this, (scheduledTask) -> Bukkit.getScheduler().runTask(this, () -> {
                 for (World world : Bukkit.getWorlds()) {
                     for (Entity entity : world.getEntities()) {
                         if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
