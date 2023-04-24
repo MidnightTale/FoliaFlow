@@ -80,7 +80,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         AsyncScheduler scheduler = getServer().getAsyncScheduler();
 
         scheduler.runDelayed(this, task -> {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
+            getServer().dispatchCommand(getServer().getConsoleSender(), "execute in minecraft:the_end run summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
         }, 30, TimeUnit.SECONDS);
 
         // Register the event listener
@@ -89,7 +89,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
+        getServer().dispatchCommand(getServer().getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
         task.cancel();
         blockktask.cancel();
         super.onDisable();
