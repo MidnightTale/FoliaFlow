@@ -1,6 +1,7 @@
 package xyz.hynse.foliaflow;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
+import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
@@ -78,11 +79,16 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             }), 0L, 1L, TimeUnit.MILLISECONDS);
         } catch (UnsupportedOperationException ignored) {
         }
+        getServer().dispatchCommand(Bukkit.getConsoleSender(), "summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
+        getServer().getLogger().info("Removed Fake Block Display");
+
         getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
+        getServer().dispatchCommand(getServer().getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
+        getServer().getLogger().info("Removed Fake Block Display");
         task.cancel();
         blockktask.cancel();
         super.onDisable();
