@@ -30,9 +30,13 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>(); // Create a map to store velocities
     private ScheduledTask blockktask;
 
+
     @Override
     public void onEnable() {
         super.onEnable();
+        Location centerLocation = new Location(Bukkit.getWorld("world_the_end"), 100, 48.5, 0);
+        double radius = 1.0;
+        checkFallingBlock(centerLocation, radius);
 
         // Get the region scheduler for the server
         try {
@@ -69,15 +73,14 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         super.onDisable();
     }
 
-    @EventHandler
-    public void onFallingBlockToBlockTheEnd(EntityChangeBlockEvent e) {
-        Entity entity = e.getEntity();
-        if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-            getLogger().info("found falling block main" + entity);
-            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
-            Location loc = entity.getLocation();
-            if (loc.distance(centerLoc) <= 2) {
-                // Set the initial velocity of the falling block only if it doesn't have a velocity stored
+    public void checkFallingBlock(Location centerLocation, double radius) {
+        World world = centerLocation.getWorld();
+        double x = centerLocation.getX();
+        double y = centerLocation.getY();
+        double z = centerLocation.getZ();
+
+        for (Entity entity : world.getNearbyEntities(centerLocation, radius, radius, radius)) {
+            if (entity instanceof FallingBlock && entity.getLocation().getBlockY() == y && entity.getLocation().getBlockX() == x && entity.getLocation().getBlockZ() == z) {
                 if (!velocitiesMap.containsKey(entity)) {
                     getLogger().info("add velocity falling block" + entity);
                     int index = counter % 4;
@@ -96,6 +99,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             }
         }
     }
+
 
 
     @EventHandler
