@@ -5,9 +5,7 @@ import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Slab;
-import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -36,7 +34,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
     private ScheduledTask task;
     private ScheduledTask blockktask;
-    private BlockDisplay display;
     @Override
     public void onEnable() {
         super.onEnable();
@@ -80,29 +77,14 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             }), 0L, 1L, TimeUnit.MILLISECONDS);
         } catch (UnsupportedOperationException ignored) {
         }
-
-        Location loc = new Location(Bukkit.getWorld("world_the_end"), 100, 48, 0);
-        BlockData blockData = Material.OBSIDIAN.createBlockData();
-        display = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).spawn(loc, BlockDisplay.class);
-        if (display == null) {
-            getLogger().severe("Failed to spawn BlockDisplay entity.");
-            return;
-        }
-        display.setBlock(blockData);
-        getLogger().info("BlockDisplay entity spawned successfully.");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                "summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
         getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
-        if (display != null) {
-            display.remove();
-            display = null;
-        }
-        for (Entity entity : Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getEntitiesByClass(BlockDisplay.class)) {
-            entity.remove();
-        }
-        getLogger().info("BlockDisplay entity removed successfully.");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
         task.cancel();
         blockktask.cancel();
         super.onDisable();
