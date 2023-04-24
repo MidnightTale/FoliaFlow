@@ -80,32 +80,16 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             }), 0L, 1L, TimeUnit.MILLISECONDS);
         } catch (UnsupportedOperationException ignored) {
         }
-        GlobalRegionScheduler scheduler = getServer().getGlobalRegionScheduler();
-        scheduler.execute(this, () -> {
-            try {
-                getServer().dispatchCommand(Bukkit.getConsoleSender(), "summon minecraft:block_display 100.0005 48 -0.0005 {block_state:{Name:\"minecraft:obsidian\"},Tags:[\"FoliaFlow_FakeBlock\"]}");
-                getServer().getLogger().info("Installed fake block display");
-            } catch (CommandException e) {
-                getLogger().warning("Error while installing Fake Block Display: " + e.getMessage());
-            }
-        });
-
         getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
-        GlobalRegionScheduler scheduler = getServer().getGlobalRegionScheduler();
-        scheduler.execute(this, () -> {
-            try {
-                getServer().dispatchCommand(getServer().getConsoleSender(), "kill @e[tag=FoliaFlow_FakeBlock]");
-                getLogger().info("Removed Fake Block Display");
-            } catch (CommandException e) {
-                getLogger().warning("Error while removing Fake Block Display: " + e.getMessage());
-            }
-        });
+        try {
         task.cancel();
         blockktask.cancel();
+        } catch (UnsupportedOperationException ignored) {
+        }
         super.onDisable();
     }
 
