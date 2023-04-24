@@ -5,7 +5,7 @@ plugins {
 def loader = 'folia'
 def server = '1.19.4'
 group = 'xyz.hynse'
-version = "1.4b-${server}-${loader}"
+version = "1.4c-${server}-${loader}"
 
 repositories {
     mavenCentral()
