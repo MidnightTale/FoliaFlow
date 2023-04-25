@@ -75,10 +75,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         File dataFile = new File(getDataFolder(), "data.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
 
-        // Get the existing flag value, or default to false if it doesn't exist
         boolean entitySpawned = config.getBoolean("entity_spawned", false);
 
-        // If the entity has not already been spawned, spawn it and set the flag to true
         if (!entitySpawned) {
             RegionScheduler schedulerdisplay = getServer().getRegionScheduler();
             String tag = "FoliaFlow_Display";
@@ -102,7 +100,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                     display.addScoreboardTag(tag);
                     getLogger().info("Setup BlockDisplay" + "(" + tag + ")  " + display);
 
-                    // Set the flag to indicate that the entity has been spawned
                     config.set("entity_spawned", true);
                     try {
                         config.save(dataFile);
