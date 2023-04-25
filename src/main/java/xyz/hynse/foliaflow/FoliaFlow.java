@@ -1,12 +1,13 @@
 package xyz.hynse.foliaflow;
 
-import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -71,6 +72,11 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         }, 20L, 1L);
 
 
+        BlockDisplay display = (BlockDisplay) Objects.requireNonNull(getServer().getWorld("world_the_end")).spawnEntity(new Location(getServer().getWorld("world_the_end"), 100, 48, 0), EntityType.BLOCK_DISPLAY);
+        BlockData obsidian = Bukkit.createBlockData(Material.OBSIDIAN);
+        display.setBlock(obsidian);
+        BlockData displayedBlock = display.getBlock();
+        getLogger().info("Displayed block: " + displayedBlock.getMaterial());
 
         getServer().getPluginManager().registerEvents(this, this);
     }
