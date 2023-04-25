@@ -71,14 +71,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
         RegionScheduler schedulerdisplay = getServer().getRegionScheduler();
         String tag = "FoliaFlow_Display";
-        for (World world : Bukkit.getWorlds()) {
-            for (Entity entity : world.getEntities()) {
-                if (entity.getScoreboardTags().contains(tag)) {
-                    entity.remove();
-                    getLogger().info("Remove BlockDisplay" + "(" + tag + ")  " + entity);
-                }
-            }
-        }
 
         schedulerdisplay.run(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
             World endWorld = getServer().getWorld("world_the_end");
@@ -89,10 +81,17 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 getLogger().info("Loaded Chunk");
             }
 
-            BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100.0005, 48, -0.0005), EntityType.BLOCK_DISPLAY);
-            display.setBlock(Bukkit.createBlockData(Material.OBSIDIAN));
-            display.addScoreboardTag(tag);
-            getLogger().info("Setup BlockDisplay" + "(" + tag + ")  " + display);
+            // Check if a block display entity with the specified tag already exists
+            boolean displayExists = endWorld.getEntitiesByClass(BlockDisplay.class).stream()
+                    .anyMatch(entity -> entity.getScoreboardTags().contains(tag));
+
+            // Spawn a new block display entity only if it doesn't already exist
+            if (!displayExists) {
+                BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100.0005, 48, -0.0005), EntityType.BLOCK_DISPLAY);
+                display.setBlock(Bukkit.createBlockData(Material.OBSIDIAN));
+                display.addScoreboardTag(tag);
+                getLogger().info("Setup BlockDisplay" + "(" + tag + ")  " + display);
+            }
         });
 
 
