@@ -5,6 +5,7 @@ import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -15,6 +16,8 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final double vh = 0.2;
@@ -69,30 +72,46 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         }, 20L, 1L);
 
 
-        RegionScheduler schedulerdisplay = getServer().getRegionScheduler();
-        String tag = "FoliaFlow_Display";
+        File dataFile = new File(getDataFolder(), "data.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
 
-        schedulerdisplay.run(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
-            World endWorld = getServer().getWorld("world_the_end");
-            assert endWorld != null;
-            Chunk chunk = endWorld.getChunkAt(0, 0);
-            if (!chunk.isLoaded()) {
-                chunk.load();
-                getLogger().info("Loaded Chunk");
-            }
+        // Get the existing flag value, or default to false if it doesn't exist
+        boolean entitySpawned = config.getBoolean("entity_spawned", false);
 
-            // Check if a block display entity with the specified tag already exists
-            boolean displayExists = endWorld.getEntitiesByClass(BlockDisplay.class).stream()
-                    .anyMatch(entity -> entity.getScoreboardTags().contains(tag));
+        // If the entity has not already been spawned, spawn it and set the flag to true
+        if (!entitySpawned) {
+            RegionScheduler schedulerdisplay = getServer().getRegionScheduler();
+            String tag = "FoliaFlow_Display";
 
-            // Spawn a new block display entity only if it doesn't already exist
-            if (!displayExists) {
-                BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100.0005, 48, -0.0005), EntityType.BLOCK_DISPLAY);
-                display.setBlock(Bukkit.createBlockData(Material.OBSIDIAN));
-                display.addScoreboardTag(tag);
-                getLogger().info("Setup BlockDisplay" + "(" + tag + ")  " + display);
-            }
-        });
+            schedulerdisplay.run(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
+                World endWorld = getServer().getWorld("world_the_end");
+                assert endWorld != null;
+                Chunk chunk = endWorld.getChunkAt(0, 0);
+                if (!chunk.isLoaded()) {
+                    chunk.load();
+                    getLogger().info("Loaded Chunk");
+                }
+
+                boolean displayExists = endWorld.getEntitiesByClass(BlockDisplay.class).stream()
+                        .anyMatch(entity -> entity.getScoreboardTags().contains(tag));
+                getLogger().info("Exist BlockDisplay" + "(" + tag + ")");
+
+                if (!displayExists) {
+                    BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100.0005, 48, -0.0005), EntityType.BLOCK_DISPLAY);
+                    display.setBlock(Bukkit.createBlockData(Material.OBSIDIAN));
+                    display.addScoreboardTag(tag);
+                    getLogger().info("Setup BlockDisplay" + "(" + tag + ")  " + display);
+
+                    // Set the flag to indicate that the entity has been spawned
+                    config.set("entity_spawned", true);
+                    try {
+                        config.save(dataFile);
+                    } catch (IOException e) {
+                        getLogger().warning("Failed to save plugin data file");
+                    }
+                }
+            });
+        }
 
 
         getServer().getPluginManager().registerEvents(this, this);
@@ -133,7 +152,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                     dummy.setVelocity(dummyVel);
                 }
             } catch (NullPointerException dummy) {
-                getServer().getLogger().info("onFallingBlockToBlock error (likly chunky it not load)");
+                getServer().getLogger().info("onFallingBlockToBlock error (likely chunky it not load)");
             }
         }
     }
