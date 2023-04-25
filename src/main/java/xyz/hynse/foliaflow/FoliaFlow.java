@@ -13,6 +13,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -70,24 +71,42 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
 
         RegionScheduler schedulerdisplay = getServer().getRegionScheduler();
+        String tag = "FoliaFlow_Display";
 
         schedulerdisplay.run(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
-                    World endWorld = getServer().getWorld("world_the_end");
-                    if (endWorld == null) {
-                        getLogger().warning("World \"world_the_end\" does not exist!");
-                        return;
-                    }
+            World endWorld = getServer().getWorld("world_the_end");
+            assert endWorld != null;
+            Chunk chunk = endWorld.getChunkAt(0, 0);
+            if (!chunk.isLoaded()) {
+                chunk.load();
+            }
 
-                    Chunk chunk = endWorld.getChunkAt(0, 0);
-                    if (!chunk.isLoaded()) {
-                        chunk.load();
-                        BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100, 48, 0), EntityType.BLOCK_DISPLAY);
-                        BlockData obsidian = Bukkit.createBlockData(Material.OBSIDIAN);
-                        display.setBlock(obsidian);
-                    }
+            // Check if the chunk already has a display block
+            for (Entity entity : chunk.getEntities()) {
+                if (entity instanceof BlockDisplay && entity.getScoreboardTags().contains(tag)) {
+                    return;
+                }
+            }
+
+            BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100.0005, 48, -0.0005), EntityType.BLOCK_DISPLAY);
+            display.setBlock(Bukkit.createBlockData(Material.OBSIDIAN));
+            display.addScoreboardTag(tag);
         });
 
-        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onPluginDisable(PluginDisableEvent event) {
+                if (event.getPlugin() == FoliaFlow.this) {
+                    for (World world : Bukkit.getWorlds()) {
+                        for (Entity entity : world.getEntities()) {
+                            if (entity instanceof BlockDisplay && entity.getScoreboardTags().contains(tag)) {
+                                entity.remove();
+                            }
+                        }
+                    }
+                }
+            }
+        }, this);
     }
     @Override
     public void onDisable() {
