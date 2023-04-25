@@ -128,28 +128,20 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             Location loc = entity.getLocation();
             Vector vel = entity.getVelocity();
             Block movingTo = getBlockMovingTo(loc, vel);
-            try {
 
-                if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                    Location spawnLoc = movingTo.getLocation();
-                    spawnLoc.setX(spawnLoc.getX()+0.5);
-                    spawnLoc.setY(spawnLoc.getY()-0.25);
-                    spawnLoc.setZ(spawnLoc.getZ()+0.5);
+            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+                Location spawnLoc = movingTo.getLocation();
+                spawnLoc.setX(spawnLoc.getX()+0.5);
+                spawnLoc.setY(spawnLoc.getY()+0.5);
+                spawnLoc.setZ(spawnLoc.getZ()+0.5);
 
-                    FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
-                    dummy.setDropItem(true);
-                    dummy.setHurtEntities(true);
-                    dummy.setGravity(true);
-                    Vector dummyVel = vel.clone();
-                    dummyVel.setY(-dummyVel.getY());
-                    dummyVel.multiply(new Vector(2, 1, 2));
+                FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+                Vector dummyVel = vel.clone();
+                dummyVel.setY(-dummyVel.getY());
+                dummyVel.multiply(new Vector(2, 2, 2));
+                dummyVel.add(new Vector(0, -0.2, 0));
 
-                    dummyVel.add(new Vector(0, 1, 0));
-
-                    dummy.setVelocity(dummyVel);
-                }
-            } catch (NullPointerException dummy) {
-                getServer().getLogger().info("onFallingBlockToBlock error (likely chunky it not load)");
+                dummy.setVelocity(dummyVel);
             }
         }
     }
