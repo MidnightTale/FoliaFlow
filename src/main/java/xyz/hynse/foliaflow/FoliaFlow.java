@@ -1,6 +1,7 @@
 package xyz.hynse.foliaflow;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
+import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
@@ -16,10 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import static org.bukkit.Bukkit.getScheduler;
-
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final double vh = 0.2;
     private final double vt = 0.8;
@@ -31,20 +28,13 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Vector[] velocities = {velocity1, velocity2, velocity3, velocity4};
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
-    private final Map<Entity, Vector> velocitiesMap = new HashMap<>(); // Create a map to store velocities
+    private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
     private ScheduledTask task;
-
     private ScheduledTask blockktask;
-
     @Override
     public void onEnable() {
         super.onEnable();
-
-        // Get the region scheduler for the server
-        try {
         RegionScheduler schedulerblock = getServer().getRegionScheduler();
-
-        // Schedule a repeating task to run every tick using runAtFixedRate() method
         blockktask = schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
             Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
             if (block.getType() == Material.OBSIDIAN) {
@@ -52,57 +42,45 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                 Slab slab = (Slab) block.getBlockData();
                 slab.setType(Slab.Type.BOTTOM);
                 block.setBlockData(slab);
+
             }
+
         }, 1L, 1L);
-        } catch (NullPointerException block) {
-            getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
-        }
-            AsyncScheduler scheduler = getServer().getAsyncScheduler();
-            task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
-                for (World world : Bukkit.getWorlds()) {
-                    for (Entity entity : world.getEntities()) {
-                        if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
-                            Location loc = entity.getLocation();
-                            if (loc.distance(centerLoc) <= 1) {
-                                // Set the initial velocity of the falling block only if it doesn't have a velocity stored
-                                if (!velocitiesMap.containsKey(entity)) {
-                                    try {
-                                        int index = counter % 4;
-                                        counter++;
-                                        Vector velocity = velocities[index];
-                                        entity.setVelocity(velocity);
-                                        velocitiesMap.put(entity, velocity); // Store the velocity in the map
-                                        movingBlocks.add(entity.getLocation()); // Add the location to the set
-                                    } catch (NullPointerException e) {
-                                        // Handle the exception here, for example:
-                                        e.printStackTrace();
-                                        getServer().getLogger().info("An error occurred: " + e.getMessage());
-                                    }
-                                }
+
+        GlobalRegionScheduler scheduler = this.getServer().getGlobalRegionScheduler();
+
+        task = scheduler.runAtFixedRate(this, (scheduledTask) -> {
+            for (World world : Bukkit.getWorlds()) {
+                for (Entity entity : world.getEntities()) {
+                    if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+                        Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
+                        Location loc = entity.getLocation();
+                        if (loc.distance(centerLoc) <= 1) {
+                            if (!velocitiesMap.containsKey(entity)) {
+                                int index = counter % 4;
+                                counter++;
+                                Vector velocity = velocities[index];
+                                entity.setVelocity(velocity);
+                                velocitiesMap.put(entity, velocity);
+                                movingBlocks.add(entity.getLocation());
                             }
                         }
                     }
                 }
-            }), 0L, 1L, TimeUnit.MILLISECONDS);
-        getServer().getPluginManager().registerEvents(this, this);
-        getServer().getConsoleSender().sendMessage("");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "    ______________             ");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "   / ____/ ____/ /___ _      __");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "  / /_  / /_  / / __ \\ | /| / /");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + " / __/ / __/ / / /_/ / |/ |/ / ");
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "/_/   /_/   /_/\\____/|__/|__/  ");
-        getServer().getConsoleSender().sendMessage("");
-        getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Plugin started successfully!");
-        getServer().getConsoleSender().sendMessage("");
-    }
+            }
+        }, 20L, 1L);
 
+
+
+        getServer().getPluginManager().registerEvents(this, this);
+    }
     @Override
     public void onDisable() {
-        task.cancel();
-        blockktask.cancel();
         super.onDisable();
     }
+
+
+
 
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
@@ -113,26 +91,26 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             Block movingTo = getBlockMovingTo(loc, vel);
             try {
 
-            if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
-                Location spawnLoc = movingTo.getLocation();
-                spawnLoc.setX(spawnLoc.getX()+0.5);
-                spawnLoc.setY(spawnLoc.getY()-0.25);
-                spawnLoc.setZ(spawnLoc.getZ()+0.5);
+                if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+                    Location spawnLoc = movingTo.getLocation();
+                    spawnLoc.setX(spawnLoc.getX()+0.5);
+                    spawnLoc.setY(spawnLoc.getY()-0.25);
+                    spawnLoc.setZ(spawnLoc.getZ()+0.5);
 
-                FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
-                dummy.setDropItem(true);
-                dummy.setHurtEntities(true);
-                dummy.setGravity(true);
-                Vector dummyVel = vel.clone();
-                dummyVel.setY(-dummyVel.getY());
-                dummyVel.multiply(new Vector(2, 1, 2));
+                    FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
+                    dummy.setDropItem(true);
+                    dummy.setHurtEntities(true);
+                    dummy.setGravity(true);
+                    Vector dummyVel = vel.clone();
+                    dummyVel.setY(-dummyVel.getY());
+                    dummyVel.multiply(new Vector(2, 1, 2));
 
-                dummyVel.add(new Vector(0, 1, 0));
+                    dummyVel.add(new Vector(0, 1, 0));
 
-                dummy.setVelocity(dummyVel);
-            }
+                    dummy.setVelocity(dummyVel);
+                }
             } catch (NullPointerException dummy) {
-                getServer().getLogger().info("onFallingBlockToBlock erorr (likly chunky it not load)");
+                getServer().getLogger().info("onFallingBlockToBlock error (likly chunky it not load)");
             }
         }
     }
@@ -160,7 +138,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             case 'y' -> relative = loc.getBlock().getRelative(0, (int) Math.signum(max), 0);
             case 'z' -> relative = loc.getBlock().getRelative(0, 0, (int) Math.signum(max));
         }
-        //debug("Moving falling block from location " + loc.toString() + " to location " + dir);
         return relative;
     }
 }
