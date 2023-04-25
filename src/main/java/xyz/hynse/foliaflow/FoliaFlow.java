@@ -12,20 +12,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import static org.bukkit.Bukkit.getScheduler;
-
 public class FoliaFlow extends JavaPlugin implements Listener {
     private final double vh = 0.2;
     private final double vt = 0.8;
@@ -40,7 +31,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
     private ScheduledTask task;
     private ScheduledTask blockktask;
-    private boolean blockCreated = false;
     @Override
     public void onEnable() {
         super.onEnable();
@@ -56,27 +46,6 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             }
 
         }, 1L, 1L);
-        /*AsyncScheduler scheduler = getServer().getAsyncScheduler();
-        task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
-                for (World world : Bukkit.getWorlds()) {
-                    for (Entity entity : world.getEntities()) {
-                        if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
-                            Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
-                            Location loc = entity.getLocation();
-                            if (loc.distance(centerLoc) <= 1) {
-                                if (!velocitiesMap.containsKey(entity)) {
-                                    int index = counter % 4;
-                                    counter++;
-                                    Vector velocity = velocities[index];
-                                    entity.setVelocity(velocity);
-                                    velocitiesMap.put(entity, velocity);
-                                    movingBlocks.add(entity.getLocation());
-                                }
-                            }
-                        }
-                    }
-                }
-            }), 0L, 1L, TimeUnit.MILLISECONDS);*/
 
         GlobalRegionScheduler scheduler = this.getServer().getGlobalRegionScheduler();
 
