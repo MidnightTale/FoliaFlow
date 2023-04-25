@@ -1,6 +1,7 @@
 package xyz.hynse.foliaflow;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
+import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
@@ -11,7 +12,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -32,31 +38,26 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
-    private ScheduledTask Foliaflow_Setblock_Task;
-    private ScheduledTask Foliaflow_Blockvelocity_Task;
-
+    private ScheduledTask task;
+    private ScheduledTask blockktask;
+    private boolean blockCreated = false;
     @Override
     public void onEnable() {
         super.onEnable();
-        try {
-            RegionScheduler Foliaflow_Setblock = getServer().getRegionScheduler();
-            Foliaflow_Setblock_Task = Foliaflow_Setblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
-                Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
-                if (block.getType() == Material.OBSIDIAN) {
-                    block.setType(Material.COBBLED_DEEPSLATE_SLAB);
-                    Slab slab = (Slab) block.getBlockData();
-                    slab.setType(Slab.Type.BOTTOM);
-                    block.setBlockData(slab);
+        RegionScheduler schedulerblock = getServer().getRegionScheduler();
+        blockktask = schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
+            Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
+            if (block.getType() == Material.OBSIDIAN) {
+                block.setType(Material.COBBLED_DEEPSLATE_SLAB);
+                Slab slab = (Slab) block.getBlockData();
+                slab.setType(Slab.Type.BOTTOM);
+                block.setBlockData(slab);
 
-                }
+            }
 
-            }, 1L, 1L);
-        } catch (NullPointerException block) {
-            getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
-        }
-        try {
-            AsyncScheduler Foliaflow_Blockvelocity = getServer().getAsyncScheduler();
-            Foliaflow_Blockvelocity_Task = Foliaflow_Blockvelocity.runAtFixedRate(this, (scheduledTask) -> getServer().getScheduler().runTaskAsynchronously(this, () -> {
+        }, 1L, 1L);
+        /*AsyncScheduler scheduler = getServer().getAsyncScheduler();
+        task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
                 for (World world : Bukkit.getWorlds()) {
                     for (Entity entity : world.getEntities()) {
                         if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
@@ -75,21 +76,42 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                         }
                     }
                 }
-            }), 0L, 1L, TimeUnit.MILLISECONDS);
-        } catch (UnsupportedOperationException ignored) {
-        }
+            }), 0L, 1L, TimeUnit.MILLISECONDS);*/
+
+        GlobalRegionScheduler scheduler = this.getServer().getGlobalRegionScheduler();
+
+        task = scheduler.runAtFixedRate(this, (scheduledTask) -> {
+            for (World world : Bukkit.getWorlds()) {
+                for (Entity entity : world.getEntities()) {
+                    if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
+                        Location centerLoc = new Location(entity.getWorld(), 100, 48.5, 0);
+                        Location loc = entity.getLocation();
+                        if (loc.distance(centerLoc) <= 1) {
+                            if (!velocitiesMap.containsKey(entity)) {
+                                int index = counter % 4;
+                                counter++;
+                                Vector velocity = velocities[index];
+                                entity.setVelocity(velocity);
+                                velocitiesMap.put(entity, velocity);
+                                movingBlocks.add(entity.getLocation());
+                            }
+                        }
+                    }
+                }
+            }
+        }, 20L, 1L);
+
+
+
         getServer().getPluginManager().registerEvents(this, this);
     }
-
     @Override
     public void onDisable() {
-        try {
-            Foliaflow_Setblock_Task.cancel();
-            Foliaflow_Blockvelocity_Task.cancel();
-        } catch (UnsupportedOperationException ignored) {
-        }
         super.onDisable();
     }
+
+
+
 
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){

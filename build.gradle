@@ -2,20 +2,14 @@ plugins {
     id 'java'
 }
 
-def loader = 'folia'
-def server = '1.19.4'
 group = 'xyz.hynse'
-version = "1.5-${server}-${loader}"
+version = "1.6"
 
 repositories {
     mavenCentral()
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
-    }
-    maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
     }
 }
 
