@@ -4,7 +4,6 @@ import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
@@ -13,7 +12,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -30,6 +28,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
+
     @Override
     public void onEnable() {
         super.onEnable();
@@ -72,6 +71,14 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
         RegionScheduler schedulerdisplay = getServer().getRegionScheduler();
         String tag = "FoliaFlow_Display";
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                if (entity.getScoreboardTags().contains(tag)) {
+                    entity.remove();
+                    getLogger().info("Remove BlockDisplay" + "(" + tag + ")  " + entity);
+                }
+            }
+        }
 
         schedulerdisplay.run(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
             World endWorld = getServer().getWorld("world_the_end");
@@ -79,34 +86,17 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             Chunk chunk = endWorld.getChunkAt(0, 0);
             if (!chunk.isLoaded()) {
                 chunk.load();
-            }
-
-            // Check if the chunk already has a display block
-            for (Entity entity : chunk.getEntities()) {
-                if (entity instanceof BlockDisplay && entity.getScoreboardTags().contains(tag)) {
-                    return;
-                }
+                getLogger().info("Loaded Chunk");
             }
 
             BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100.0005, 48, -0.0005), EntityType.BLOCK_DISPLAY);
             display.setBlock(Bukkit.createBlockData(Material.OBSIDIAN));
             display.addScoreboardTag(tag);
+            getLogger().info("Setup BlockDisplay" + "(" + tag + ")  " + display);
         });
 
-        getServer().getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onPluginDisable(PluginDisableEvent event) {
-                if (event.getPlugin() == FoliaFlow.this) {
-                    for (World world : Bukkit.getWorlds()) {
-                        for (Entity entity : world.getEntities()) {
-                            if (entity instanceof BlockDisplay && entity.getScoreboardTags().contains(tag)) {
-                                entity.remove();
-                            }
-                        }
-                    }
-                }
-            }
-        }, this);
+
+        getServer().getPluginManager().registerEvents(this, this);
     }
     @Override
     public void onDisable() {
