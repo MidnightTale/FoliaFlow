@@ -32,15 +32,15 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
-    private ScheduledTask task;
-    private ScheduledTask blockktask;
+    private ScheduledTask Foliaflow_Setblock_Task;
+    private ScheduledTask Foliaflow_Blockvelocity_Task;
 
     @Override
     public void onEnable() {
         super.onEnable();
         try {
-            RegionScheduler schedulerblock = getServer().getRegionScheduler();
-            blockktask = schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
+            RegionScheduler Foliaflow_Setblock = getServer().getRegionScheduler();
+            Foliaflow_Setblock_Task = Foliaflow_Setblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
                 Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
                 if (block.getType() == Material.OBSIDIAN) {
                     block.setType(Material.COBBLED_DEEPSLATE_SLAB);
@@ -55,8 +55,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
             getServer().getLogger().info("Region Scheduler erorr (likly chunky it not load)");
         }
         try {
-            AsyncScheduler scheduler = getServer().getAsyncScheduler();
-            task = scheduler.runAtFixedRate(this, (scheduledTask) -> getScheduler().runTask(this, () -> {
+            AsyncScheduler Foliaflow_Blockvelocity = getServer().getAsyncScheduler();
+            Foliaflow_Blockvelocity_Task = Foliaflow_Blockvelocity.runAtFixedRate(this, (scheduledTask) -> getServer().getScheduler().runTaskAsynchronously(this, () -> {
                 for (World world : Bukkit.getWorlds()) {
                     for (Entity entity : world.getEntities()) {
                         if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
@@ -84,8 +84,8 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         try {
-        task.cancel();
-        blockktask.cancel();
+            Foliaflow_Setblock_Task.cancel();
+            Foliaflow_Blockvelocity_Task.cancel();
         } catch (UnsupportedOperationException ignored) {
         }
         super.onDisable();
@@ -119,7 +119,7 @@ public class FoliaFlow extends JavaPlugin implements Listener {
                     dummy.setVelocity(dummyVel);
                 }
             } catch (NullPointerException dummy) {
-                getServer().getLogger().info("onFallingBlockToBlock erorr (likly chunky it not load)");
+                getServer().getLogger().info("onFallingBlockToBlock error (likly chunky it not load)");
             }
         }
     }
