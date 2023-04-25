@@ -2,7 +2,6 @@ package xyz.hynse.foliaflow;
 
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -30,13 +29,11 @@ public class FoliaFlow extends JavaPlugin implements Listener {
     private int counter = 0;
     private final Set<Location> movingBlocks = new HashSet<>();
     private final Map<Entity, Vector> velocitiesMap = new HashMap<>();
-    private ScheduledTask task;
-    private ScheduledTask blockktask;
     @Override
     public void onEnable() {
         super.onEnable();
         RegionScheduler schedulerblock = getServer().getRegionScheduler();
-        blockktask = schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
+        schedulerblock.runAtFixedRate(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
             Block block = Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getBlockAt(100, 48, 0);
             if (block.getType() == Material.OBSIDIAN) {
                 block.setType(Material.COBBLED_DEEPSLATE_SLAB);
@@ -48,9 +45,9 @@ public class FoliaFlow extends JavaPlugin implements Listener {
 
         }, 1L, 1L);
 
-        GlobalRegionScheduler scheduler = this.getServer().getGlobalRegionScheduler();
+        GlobalRegionScheduler schedulervelocity = this.getServer().getGlobalRegionScheduler();
 
-        task = scheduler.runAtFixedRate(this, (scheduledTask) -> {
+        schedulervelocity.runAtFixedRate(this, (scheduledTask) -> {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
                     if (entity.getType() == EntityType.FALLING_BLOCK && entity.getWorld().getEnvironment() == World.Environment.THE_END) {
@@ -72,11 +69,23 @@ public class FoliaFlow extends JavaPlugin implements Listener {
         }, 20L, 1L);
 
 
-        BlockDisplay display = (BlockDisplay) Objects.requireNonNull(getServer().getWorld("world_the_end")).spawnEntity(new Location(getServer().getWorld("world_the_end"), 100, 48, 0), EntityType.BLOCK_DISPLAY);
-        BlockData obsidian = Bukkit.createBlockData(Material.OBSIDIAN);
-        display.setBlock(obsidian);
-        BlockData displayedBlock = display.getBlock();
-        getLogger().info("Displayed block: " + displayedBlock.getMaterial());
+        RegionScheduler schedulerdisplay = getServer().getRegionScheduler();
+
+        schedulerdisplay.run(this, Objects.requireNonNull(Bukkit.getWorld("world_the_end")), 1, 1, (schedulerTask) -> {
+                    World endWorld = getServer().getWorld("world_the_end");
+                    if (endWorld == null) {
+                        getLogger().warning("World \"world_the_end\" does not exist!");
+                        return;
+                    }
+
+                    Chunk chunk = endWorld.getChunkAt(0, 0);
+                    if (!chunk.isLoaded()) {
+                        chunk.load();
+                        BlockDisplay display = (BlockDisplay) endWorld.spawnEntity(new Location(endWorld, 100, 48, 0), EntityType.BLOCK_DISPLAY);
+                        BlockData obsidian = Bukkit.createBlockData(Material.OBSIDIAN);
+                        display.setBlock(obsidian);
+                    }
+        });
 
         getServer().getPluginManager().registerEvents(this, this);
     }
