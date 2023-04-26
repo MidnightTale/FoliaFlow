@@ -3,3 +3,8 @@ version: '${version}'
 main: xyz.hynse.foliaflow.FoliaFlow
 api-version: 1.19
 folia-supported: true
+commands:
+  flowreload:
+    description: Reload FoliaFlow
+    usage: /<command>
+    permission: foliaflow.reload

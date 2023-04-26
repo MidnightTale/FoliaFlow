@@ -1,0 +1,7 @@
+# Don't touch this file unless you know what you're doing
+# Default values seems vanilla.
+# If you find values that seems more vanilla please create a PR
+# https://github.com/Hynse/FoliaFlow
+
+vertical_coefficient: -1.7
+horizontal_coefficient: 1.46

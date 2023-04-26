@@ -17,6 +17,7 @@ import xyz.hynse.foliaflow.util.SchedulerUtil;
 import static xyz.hynse.foliaflow.util.VelocityUtil.getBlockMovingTo;
 
 public class PortalWatcher implements Listener {
+
     @EventHandler
     public void onFallingBlockToBlock(EntityChangeBlockEvent e){
         if(e.getEntityType() != EntityType.FALLING_BLOCK) return;
@@ -31,8 +32,8 @@ public class PortalWatcher implements Listener {
 
             FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
             Vector dummyVel = vel.clone();
-            dummyVel.setY(-dummyVel.getY());
-            dummyVel.multiply(1.3); // This seems vanilla.
+            dummyVel.multiply(FoliaFlow.horizontalCoefficient);
+            dummyVel.setY(vel.getY() * FoliaFlow.verticalCoefficient);
             dummy.setVelocity(dummyVel);
 
             // Add vector seems vanilla.
