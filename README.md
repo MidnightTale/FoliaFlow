@@ -4,7 +4,7 @@
 FoliaFlow is a Minecraft plugin that allows players to using gravity block duplication glitch again in folia (paper soon)
 
 ## How is work?
-Whenever a falling sand entity comes close to or hits the end portal, a new falling sand entity is summoned with a velocity that shoots it straight into the portal. However, we encountered a problem when the entity got reset by the safe teleport paper patch - it lost its velocity. To fix this, we added the velocity back when the entity was in the end. Another issue we faced was that the entity would instantly turn into a block upon teleportation because it have block below. To solve this, we made the center block of the spawn platform a slab, ensuring that the entity stays in its falling state.
+Whenever a falling sand entity comes close to or hits the end portal, a new falling sand entity is summoned with a velocity that shoots it straight into the portal. However, we encountered a problem when the entity got reset by the safe teleport paper patch - it lost its velocity. To fix this, we added the velocity back when the entity was in the end.
 
 
 ## Installation
