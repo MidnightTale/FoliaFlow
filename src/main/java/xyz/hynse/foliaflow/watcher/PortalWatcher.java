@@ -25,7 +25,7 @@ public class PortalWatcher implements Listener {
         Vector vel = entity.getVelocity();
         Block movingTo = getBlockMovingTo(loc, vel);
 
-        if(movingTo != null && movingTo.getType() == Material.END_PORTAL){
+        if(movingTo.getType() == Material.END_PORTAL){
             Location spawnLoc = movingTo.getLocation();
             spawnLoc.add(0.5, 0.5, 0.5);
 
@@ -37,8 +37,11 @@ public class PortalWatcher implements Listener {
             dummy.setVelocity(dummyVel);
 
             // Add vector seems vanilla.
-            SchedulerUtil.runLaterEntity(dummy, FoliaFlow.instance,
-                () -> dummy.setVelocity(dummyVel.add(new Vector(0, 0.45, 0))),
+            SchedulerUtil.runLaterEntity(dummy, FoliaFlow.instance, () -> {
+                    // Portal teleportation on Folia is a bit below vanilla, so we teleport it above
+                    if (SchedulerUtil.isFolia()) dummy.teleportAsync(dummy.getLocation().add(0, 0.5, 0));
+                    dummy.setVelocity(dummyVel.add(new Vector(0, 0.2, 0)));
+                },
                 2
             );
         }
