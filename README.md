@@ -15,6 +15,24 @@ To install FoliaFlow, follow these steps:
 2. Copy the JAR file to the `plugins` folder of your Minecraft server.
 3. Restart your server to load the plugin.
 
+## config.yml
+```yml
+# Don't touch this file unless you know what you're doing
+# Default values seems vanilla.
+# If you find values that seems more vanilla please create a PR
+# https://github.com/Hynse/FoliaFlow
+
+# Optimize value for horizontal_coefficient
+#  - Folia (1.499)
+#  - Paper (1.3)
+horizontal_coefficient: 1.499
+vertical_coefficient: -1.7
+spawn_height: 0.08
+folia_offset: 0.5
+```
+
+## permissions
+`foliaflow.reload` for using command `/flowreload` to reload config flies
 ## Contributing
 
 If you would like to contribute to FoliaFlow, feel free to submit a pull request with your changes. All contributions are welcome and appreciated.
