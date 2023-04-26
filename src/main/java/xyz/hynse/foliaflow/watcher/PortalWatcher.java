@@ -10,7 +10,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.util.Vector;
+
 import xyz.hynse.foliaflow.FoliaFlow;
+import xyz.hynse.foliaflow.util.SchedulerUtil;
 
 import static xyz.hynse.foliaflow.util.VelocityUtil.getBlockMovingTo;
 
@@ -35,9 +37,8 @@ public class PortalWatcher implements Listener {
             dummy.setVelocity(dummyVel);
 
             // Add vector seems vanilla.
-            dummy.getScheduler().runDelayed(FoliaFlow.instance,
-                task -> dummy.setVelocity(dummyVel.add(new Vector(0, 0.45, 0))),
-                null,
+            SchedulerUtil.runLaterEntity(dummy, FoliaFlow.instance,
+                () -> dummy.setVelocity(dummyVel.add(new Vector(0, 0.45, 0))),
                 2
             );
         }
