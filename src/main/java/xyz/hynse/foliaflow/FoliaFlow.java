@@ -11,6 +11,7 @@ public class FoliaFlow extends JavaPlugin {
     public static double horizontalCoefficient;
     public static double verticalCoefficient;
     public static double spawnHeight;
+    public static double foliaOffset;
 
     @Override
     public void onEnable() {
@@ -25,6 +26,7 @@ public class FoliaFlow extends JavaPlugin {
         horizontalCoefficient = getConfig().getDouble("horizontal_coefficient");
         verticalCoefficient = getConfig().getDouble("vertical_coefficient");
         spawnHeight = getConfig().getDouble("spawn_height");
+        foliaOffset = getConfig().getDouble("folia_offset");
     }
 
     private void register() {
