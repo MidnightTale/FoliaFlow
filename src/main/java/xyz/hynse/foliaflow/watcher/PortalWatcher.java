@@ -28,7 +28,7 @@ public class PortalWatcher implements Listener {
 
         if(movingTo.getType() == Material.END_PORTAL){
             Location spawnLoc = movingTo.getLocation();
-            spawnLoc.add(0.5, 0.5, 0.5);
+            spawnLoc.add(0.5, FoliaFlow.spawnHeight, 0.5);
 
             FallingBlock dummy = loc.getWorld().spawnFallingBlock(spawnLoc, ((FallingBlock) entity).getBlockData());
             Vector dummyVel = vel.clone();
