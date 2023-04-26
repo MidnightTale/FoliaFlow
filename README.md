@@ -1,10 +1,14 @@
-# FoliaFlow
-![sss1](https://user-images.githubusercontent.com/125941391/231678608-9762d384-dc3a-440c-a4eb-3340cb39a3e3.png)
-
 FoliaFlow is a Minecraft plugin that allows players to using gravity block duplication glitch again in Paper and Folia
 
 ## How is work?
 Whenever a falling sand entity comes close to or hits the end portal, a new falling sand entity is summoned with a velocity that shoots it straight into the portal. However, we encountered a problem when the entity got reset by the safe teleport Paper patch - it lose its velocity. To fix this, we added the velocity back when the entity was in the end.
+
+## ⚠️If you using folia 
+And type of concreate factory collector that use piston full block to stop falling blocks. You should change to slab to prevent block early break follow picture below
+### Top View
+![topviewff](https://user-images.githubusercontent.com/125941391/234716000-8dfe3f57-b9a4-4340-8d1a-4e63fe2cdb91.png)
+### Side View
+![sideviewff](https://user-images.githubusercontent.com/125941391/234716115-f793602c-17f9-4689-9740-7ff25013eed4.png)
 
 
 ## Installation
