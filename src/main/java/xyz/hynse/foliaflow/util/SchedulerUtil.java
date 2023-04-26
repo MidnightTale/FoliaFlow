@@ -16,7 +16,7 @@ public class SchedulerUtil {
         return false;
     }
 
-    private static Boolean isFolia() {
+    public static Boolean isFolia() {
         if (IS_FOLIA == null) IS_FOLIA = tryFolia();
         return IS_FOLIA;
     }
