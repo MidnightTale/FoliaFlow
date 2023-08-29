@@ -3,17 +3,17 @@
 # If you find values that seems more vanilla please create a PR
 # https://github.com/Hynse/FoliaFlow
 
-# Optimize value for horizontal_coefficient
+# Default value for horizontal_coefficient
 #  - Folia (1.499)
-#  - Paper (1.3)
-horizontal_coefficient: 1.3
+#  - Paper (2)
+horizontal_coefficient: 2
 # -----------------------------------------
 
 vertical_coefficient: -1.7
 spawn_height: 0.08
 
-# Optimize value for teleport_offset
-#  - Folia (0.5 or -1)
-#  - Paper (6)
-teleport_offset: 0.5
+# Default value for teleport_offset
+#  - Folia (0.5)
+#  - Paper (2.4)
+teleport_offset: 2.4
 # -----------------------------------------

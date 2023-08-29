@@ -42,7 +42,7 @@ public class PortalWatcher implements Listener {
                     dummy.teleportAsync(dummy.getLocation().add(0, FoliaFlow.TeleportOffset, 0));
                     dummy.setVelocity(dummyVel);
                 },
-                2
+                4
             );
         }
     }

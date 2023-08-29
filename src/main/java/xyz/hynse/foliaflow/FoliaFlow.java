@@ -48,11 +48,11 @@ public class FoliaFlow extends JavaPlugin {
         config.setDefaults(defaultConfig);
         boolean isFolia = SchedulerUtil.isFolia();
         if (!config.contains("horizontal_coefficient")) {
-            double horizontalCoefficient = isFolia ? 1.499 : 1.3;
+            double horizontalCoefficient = isFolia ? 1.499 : 2;
             config.set("horizontal_coefficient", horizontalCoefficient);
         }
         if (!config.contains("teleport_offset")) {
-            double telportCoefficient = isFolia ? 0.5 : 6;
+            double telportCoefficient = isFolia ? 0.5 : 2.4;
             config.set("teleport_offset", telportCoefficient);
         }
         try {
