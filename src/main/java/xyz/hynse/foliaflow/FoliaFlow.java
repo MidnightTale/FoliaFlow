@@ -18,7 +18,7 @@ public class FoliaFlow extends JavaPlugin {
     public static double horizontalCoefficient;
     public static double verticalCoefficient;
     public static double spawnHeight;
-    public static double foliaOffset;
+    public static double TeleportOffset;
 
     @Override
     public void onEnable() {
@@ -51,6 +51,10 @@ public class FoliaFlow extends JavaPlugin {
             double horizontalCoefficient = isFolia ? 1.499 : 1.3;
             config.set("horizontal_coefficient", horizontalCoefficient);
         }
+        if (!config.contains("teleport_offset")) {
+            double telportCoefficient = isFolia ? 0.5 : 6;
+            config.set("teleport_offset", telportCoefficient);
+        }
         try {
             config.save(configFile);
         } catch (IOException e) {
@@ -64,7 +68,7 @@ public class FoliaFlow extends JavaPlugin {
         horizontalCoefficient = getConfig().getDouble("horizontal_coefficient");
         verticalCoefficient = getConfig().getDouble("vertical_coefficient");
         spawnHeight = getConfig().getDouble("spawn_height");
-        foliaOffset = getConfig().getDouble("folia_offset");
+        TeleportOffset = getConfig().getDouble("teleport_offset");
     }
 
     private void register() {
