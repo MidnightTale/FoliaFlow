@@ -26,13 +26,20 @@ To install FoliaFlow, follow these steps:
 # If you find values that seems more vanilla please create a PR
 # https://github.com/Hynse/FoliaFlow
 
-# Optimize value for horizontal_coefficient
+# Default value for horizontal_coefficient
 #  - Folia (1.499)
-#  - Paper (1.3)
+#  - Paper (2)
 horizontal_coefficient: 1.499
+# -----------------------------------------
+
 vertical_coefficient: -1.7
 spawn_height: 0.08
-folia_offset: 0.5
+
+# Default value for teleport_offset
+#  - Folia (0.5)
+#  - Paper (2.4)
+teleport_offset: 0.5
+# -----------------------------------------
 ```
 
 ## Permissions
