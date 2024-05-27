@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'xyz.hynse'
-version = "2.3_a"
+version = "2.4"
 
 repositories {
     mavenCentral()
@@ -14,10 +14,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly "dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT"
+    compileOnly "dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT"
 }
 
-def targetJavaVersion = 17
+def targetJavaVersion = 21
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

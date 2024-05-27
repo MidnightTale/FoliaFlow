@@ -6,7 +6,7 @@
 # Default value for horizontal_coefficient
 #  - Folia (1.499)
 #  - Paper (2)
-horizontal_coefficient: 2
+horizontal_coefficient: 1.499
 # -----------------------------------------
 
 vertical_coefficient: -1.7
@@ -15,5 +15,5 @@ spawn_height: 0.08
 # Default value for teleport_offset
 #  - Folia (0.5)
 #  - Paper (2.4)
-teleport_offset: 2.4
+teleport_offset: 0.5
 # -----------------------------------------

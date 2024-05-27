@@ -36,13 +36,12 @@ public class PortalWatcher implements Listener {
             dummyVel.setY(vel.getY() * FoliaFlow.verticalCoefficient);
             dummy.setVelocity(dummyVel);
 
-            // Add vector seems vanilla.
             SchedulerUtil.runLaterEntity(dummy, FoliaFlow.instance, () -> {
-                    // Portal teleportation is a bit below vanilla, so we teleport it above (happen on paper 1.20 b169)
-                    dummy.teleportAsync(dummy.getLocation().add(0, FoliaFlow.TeleportOffset, 0));
-                    dummy.setVelocity(dummyVel);
-                },
-                4
+                        // Portal teleportation is a bit below vanilla, so we teleport it above
+                        dummy.teleportAsync(dummy.getLocation().add(0, FoliaFlow.TeleportOffset, 0));
+                        dummy.setVelocity(dummyVel);
+                    },
+                    2
             );
         }
     }

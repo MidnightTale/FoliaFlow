@@ -4,7 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.hynse.foliaflow.command.ReloadCommand;
-import xyz.hynse.foliaflow.util.SchedulerUtil;
+import xyz.hynse.foliaflow.util.CheckSafeTeleportation;
 import xyz.hynse.foliaflow.watcher.PortalWatcher;
 
 import java.io.File;
@@ -14,11 +14,13 @@ import java.io.InputStreamReader;
 
 public class FoliaFlow extends JavaPlugin {
     private boolean isFirstEnable = true;
+    //public boolean isUnSafeTeleport = false;
     public static FoliaFlow instance;
     public static double horizontalCoefficient;
     public static double verticalCoefficient;
     public static double spawnHeight;
     public static double TeleportOffset;
+    //public static CheckSafeTeleportation checkSafeTeleportation;
 
     @Override
     public void onEnable() {
@@ -46,15 +48,6 @@ public class FoliaFlow extends JavaPlugin {
         YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultConfigStream));
         config.options().copyDefaults(true);
         config.setDefaults(defaultConfig);
-        boolean isFolia = SchedulerUtil.isFolia();
-        if (!config.contains("horizontal_coefficient")) {
-            double horizontalCoefficient = isFolia ? 1.499 : 2;
-            config.set("horizontal_coefficient", horizontalCoefficient);
-        }
-        if (!config.contains("teleport_offset")) {
-            double telportCoefficient = isFolia ? 0.5 : 2.4;
-            config.set("teleport_offset", telportCoefficient);
-        }
         try {
             config.save(configFile);
         } catch (IOException e) {
@@ -73,6 +66,8 @@ public class FoliaFlow extends JavaPlugin {
 
     private void register() {
         getCommand("flowreload").setExecutor(new ReloadCommand());
+//        checkSafeTeleportation = new CheckSafeTeleportation();
+//        checkSafeTeleportation.updateSafeTeleportation();
         getServer().getPluginManager().registerEvents(new PortalWatcher(), this);
     }
 }
